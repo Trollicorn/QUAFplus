@@ -37,4 +37,11 @@ uddinM -- 21:20 2019-05-09
 -setup Travis CI for repository
 --------------------------------------------------------------
 
+uddinM -- 04:20 2019-05-13
+-updated design doc:
+  -a site map was included
+  -deadlines were added
+  -SQL is being used instead of mongoDB for posts
+--------------------------------------------------------------
+
 ==============================================================
