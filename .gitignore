@@ -1,0 +1,6 @@
+*.py[cod]
+*~*
+\#*\#
+*.out
+secret.txt
+*.key
