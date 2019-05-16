@@ -1,7 +1,7 @@
 import sqlite3
 
 def createPosts():
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
 
     c.execute("""CREATE TABLE IF NOT EXISTS posts(
@@ -33,13 +33,14 @@ def createPosts():
     db.commit()
     db.close()
 
+createPosts()
 
 def checkInfo(user, pswd):
 
     '''This method checks if the user and password combination
     is valid, and returns error msgs based off that check.'''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
     #Looks for the password of the inputted osis num(aka user)
     for i in c.execute("SELECT pass FROM users WHERE osis = ?",(user,)):
@@ -56,14 +57,23 @@ def checkInfo(user, pswd):
         db.close()
         return "This ain't it chief"
 
+#testing function
+#print(checkInfo(217412923, "bobo"))
+#print(checkInfo(217412923, "bobobobo"))
+#print(checkInfo(2174123, "bobo"))
+
 def createAccount(user,pswd,passConf,firstN,lastN):
 
     '''This method checks inputs when creating an acc
     to make sure user didn't mess up anywhere in the process. If everything
     is good, then the account will be created.'''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
+    #checks if user is an osis
+    if((not isinstance(user, int)) or (len(str(user))!= 9) ):
+        return "Not an integer or not the right length for osis"
+
     #checks if the username already exists
     for i in c.execute("SELECT osis FROM users WHERE osis = ?",(user,)):
         db.close()
@@ -79,3 +89,9 @@ def createAccount(user,pswd,passConf,firstN,lastN):
         db.commit()
         db.close()
         return "Account creation successful"
+
+#testing functions
+#print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
+print(createAccount("217412923", "bo", "bo", "hello", "lu"))
+print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
+print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
