@@ -57,4 +57,10 @@ boL -- 13:15 2019-05-16
 -added extra checks in acc creation and tested if functions worked
 --------------------------------------------------------------
 
+boL, simonT -- 13:10 2019-05-17
+--------------------------------------------------------------
+-more account creation stuff
+-used bootstrap to create basic site with collapsible items
+--------------------------------------------------------------
+
 ==============================================================

@@ -92,6 +92,6 @@ def createAccount(user,pswd,passConf,firstN,lastN):
 
 #testing functions
 #print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
-print(createAccount("217412923", "bo", "bo", "hello", "lu"))
-print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
-print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
+#print(createAccount("217412923", "bo", "bo", "hello", "lu"))
+#print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
+#print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
