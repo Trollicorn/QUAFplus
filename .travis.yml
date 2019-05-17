@@ -6,4 +6,4 @@ dist:
 install:
  - pip install -r requirements.txt
 script: 
- - python app.py
+ - python QUAFplus/__init__.py
