@@ -1,0 +1,25 @@
+div.code_in{
+	font-family:Menlo,monospace;
+	padding-left:10px;
+}
+.code_out{
+	font-family:Menlo,monospace;
+	background-color:#CFCFCF;
+	padding-left:10px;
+}
+.code_run{
+	background-color:#3AC169;
+	text-align:center;
+	align:center;
+}
+.code_title{
+	background-color:#E0DE26;
+	text-align:left;
+	align:left;
+	padding-left:20px;
+}
+.code_type{
+	font-family:Menlo,monospace;
+	font-size:9px;
+	font-weight:bold;
+}

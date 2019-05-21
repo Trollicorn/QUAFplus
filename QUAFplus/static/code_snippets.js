@@ -9,13 +9,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 		let q=py_snips.item(i);
 		console.log(q);
 		q.getElementsByClassName("code_run").item(0).addEventListener("click",()=>{
-			q.getElementsByClassName("code_out").item(0).innerHTML='';
+			let cdo=q.getElementsByClassName("code_out").item(0);
+			cdo.innerHTML='';
 			Sk.configure({output:out(q),read:builtinRead});
+			let cde=q.getElementsByClassName("code_in").item(0);
+			let cdsrc=cde.tagName==="DIV"?cde.innerHTML:cde.value;
 			try{
-				Sk.importMainWithBody("<stdin>",false,q.getElementsByClassName("code_in").item(0).value);
+				Sk.importMainWithBody("<stdin>",false,cdsrc);
 			}catch(aaa){
 				q.getElementsByClassName("code_out").item(0).innerHTML=aaa;
 			}
+			if(cdo.innerHTML==='')cdo.innerHTML='<br>';
 		});
 	}
     var builtinRead=(x)=>{
