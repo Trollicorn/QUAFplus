@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, random
 
 def createPosts():
     db = sqlite3.connect("data/quaf.db")
@@ -95,3 +95,24 @@ def createAccount(user,pswd,passConf,firstN,lastN):
 #print(createAccount("217412923", "bo", "bo", "hello", "lu"))
 #print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
 #print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
+
+"""
+def findParent(reply):
+    db = sqlite3.connect("data/quaf.db")
+    c = db.cursor()
+    for i in c.execute("SELECT parentID FROM replies WHERE replyID = ?",(reply,)):
+
+
+def createReply(author, parent, content):
+
+    '''
+    This method creates a reply to posts and stores it in the database. It will imitate
+    a comment tree similar to that of reddit, and that will be done through searching through
+    the potential parent reply.
+    '''
+
+    db = sqlite3.connect("data/quaf.db")
+    c = db.cursor()
+
+    replyID = random.randint(1,99999999999999999999)
+"""
