@@ -1,7 +1,7 @@
 import sqlite3
 
 def createPosts():
-    db = sqlite3.connect("../data/quaf.db")
+    db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
 
     c.execute("""CREATE TABLE IF NOT EXISTS posts(
@@ -40,7 +40,7 @@ def checkInfo(user, pswd):
     '''This method checks if the user and password combination
     is valid, and returns error msgs based off that check.'''
 
-    db = sqlite3.connect("../data/quaf.db")
+    db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
     #Looks for the password of the inputted osis num(aka user)
     for i in c.execute("SELECT pass FROM users WHERE osis = ?",(user,)):
@@ -68,7 +68,7 @@ def createAccount(user,pswd,passConf,firstN,lastN):
     to make sure user didn't mess up anywhere in the process. If everything
     is good, then the account will be created.'''
 
-    db = sqlite3.connect("../data/quaf.db")
+    db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
     #checks if user is an osis
     if((not isinstance(user, int)) or (len(str(user))!= 9) ):
