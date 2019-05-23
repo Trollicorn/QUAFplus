@@ -4,6 +4,7 @@ def createPosts():
     db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
 
+    #authorID may just be set to osis for simplicity
     c.execute("""CREATE TABLE IF NOT EXISTS posts(
                 postId INTEGER PRIMARY KEY AUTOINCREMENT,
                 postType TEXT,
@@ -12,6 +13,7 @@ def createPosts():
                 tags TEXT
                 )"""
                 )
+
     c.execute("""CREATE TABLE IF NOT EXISTS replies(
                 replyID INTEGER,
                 replyContent TEXT,
@@ -84,24 +86,29 @@ def createAccount(user,pswd,passConf,firstN,lastN):
             db.close()
             return "Passwords do not match - Try again"
         #if password confirmation succeeds add the user to the database
-        userdb="INSERT INTO users(osis, pass, firstN, lastN) VALUES( ?, ?, ?, ?)"
-        c.execute(userdb,(user,pswd,firstN,lastN))
+        userdb="INSERT INTO users(firstN, lastN, osis, pass, numPost, numDeleted, numPost) VALUES( ?, ?, ?, ?, ?, ?, ?)"
+        c.execute(userdb,(firstN,lastN, user,pswd, 0, 0 , 0))
         db.commit()
         db.close()
         return "Account creation successful"
 
 #testing functions
-#print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
-#print(createAccount("217412923", "bo", "bo", "hello", "lu"))
-#print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
-#print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
+print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
+print(createAccount("217412923", "bo", "bo", "hello", "lu"))
+print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
+print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
 
-"""
 def findParent(reply):
+
+    '''Helper method to return parent(if it exists) of a reply'''
+
     db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
     for i in c.execute("SELECT parentID FROM replies WHERE replyID = ?",(reply,)):
+        db.close()
+        return i[0]
 
+#print(findParent(226311524667076))
 
 def createReply(author, parent, content):
 
@@ -113,6 +120,28 @@ def createReply(author, parent, content):
 
     db = sqlite3.connect("data/quaf.db")
     c = db.cursor()
+    randomID = random.randint(1,9999999999999999)
+    print(randomID)
+    #parent exists
+    if parent != 0:
+        reply="INSERT INTO replies(replyID, replyContent, parentID, authorID) VALUES(?, ?, ?, ?)"
+        c.execute(reply,(randomID, content, parent, author))
+        db.commit()
+        db.close()
+        return "reply with parent created"
 
-    replyID = random.randint(1,99999999999999999999)
-"""
+    #no parent
+    else:
+        reply="INSERT INTO replies(replyID, replyContent, replyID) VALUES(?, ?, ?)"
+        c.execute(reply,(randomID, content, author))
+        db.commit()
+        db.close()
+        return "reply w/o parent created"
+
+
+#simulated scenario by commenting out each print in order:
+#print(createReply(217412924, 0, "I like doggo" )) #no parent. replyID = 8689533145667125 based off print statement
+#print(createReply(217412923, 8689533145667125, "I like doggo 2" )) #with parent from above, replyID = 2904793441211501
+print(findParent(2904793441211501)) #expected to be replyID from the first print statement - CONFIRMED
+#print(createReply(217412923, 5005249477290031, "I like doggo" ))
+#print(createReply(217412923, 5005249477290031, "I like doggo" ))
