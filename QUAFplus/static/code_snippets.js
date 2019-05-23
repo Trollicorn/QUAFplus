@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded",()=>{
     var out=(e)=>{
 		return(t)=>{
-			e.getElementsByClassName("code_out").item(0).innerHTML+=t;
+		    e.getElementsByClassName("code_out").item(0).innerHTML+=t.replace("\n","<br>");
 		};
     };
 	py_snips=document.getElementsByClassName("py_snip");
