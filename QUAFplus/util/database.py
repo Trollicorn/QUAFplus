@@ -1,7 +1,7 @@
 import sqlite3, random
 
 def createPosts():
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
 
     #authorID may just be set to osis for simplicity
@@ -37,17 +37,20 @@ def createPosts():
 
 createPosts()
 
+
+#-------------------------------------------------ACOUNT CREATION TOP-------------------------------------------------
 def checkInfo(user, pswd):
 
     '''This method checks if the user and password combination
     is valid, and returns error msgs based off that check.'''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
     #Looks for the password of the inputted osis num(aka user)
     for i in c.execute("SELECT pass FROM users WHERE osis = ?",(user,)):
          #If user is found and passwords match
         if i[0] == pswd:
+            db.close()
             return "Login Successful - Welcome to QUAF+"
          #If passwords don't match
         else:
@@ -60,9 +63,9 @@ def checkInfo(user, pswd):
         return "This ain't it chief"
 
 #testing function
-#print(checkInfo(217412923, "bobo"))
-#print(checkInfo(217412923, "bobobobo"))
-#print(checkInfo(2174123, "bobo"))
+# print(checkInfo(217412923, "bobo"))
+# print(checkInfo(217412923, "bobobobo"))
+# print(checkInfo(2174123, "bobo"))
 
 def createAccount(user,pswd,passConf,firstN,lastN):
 
@@ -70,16 +73,18 @@ def createAccount(user,pswd,passConf,firstN,lastN):
     to make sure user didn't mess up anywhere in the process. If everything
     is good, then the account will be created.'''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
     #checks if user is an osis
     if((not isinstance(user, int)) or (len(str(user))!= 9) ):
+        db.close()
         return "Not an integer or not the right length for osis"
 
     #checks if the username already exists
     for i in c.execute("SELECT osis FROM users WHERE osis = ?",(user,)):
         db.close()
         return "Username already exists - Stop trying to steal someone's identity"
+
     else:
         #if password confirmation fails
         if pswd != passConf:
@@ -93,16 +98,19 @@ def createAccount(user,pswd,passConf,firstN,lastN):
         return "Account creation successful"
 
 #testing functions
-print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
-print(createAccount("217412923", "bo", "bo", "hello", "lu"))
-print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
-print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
+# print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
+# print(createAccount("217412923", "bo", "bo", "hello", "lu"))
+# print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
+# print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
+#-------------------------------------------------ACOUNT CREATION BOTTOM-------------------------------------------------
 
+
+#-------------------------------------------------REPLIES TOP-------------------------------------------------
 def findParent(reply):
 
     '''Helper method to return parent(if it exists) of a reply'''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
     for i in c.execute("SELECT parentID FROM replies WHERE replyID = ?",(reply,)):
         db.close()
@@ -110,7 +118,9 @@ def findParent(reply):
 
 #print(findParent(226311524667076))
 
+
 def createReply(author, parent, content):
+
 
     '''
     This method creates a reply to posts and stores it in the database. It will imitate
@@ -118,7 +128,7 @@ def createReply(author, parent, content):
     the potential parent reply.
     '''
 
-    db = sqlite3.connect("data/quaf.db")
+    db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
     randomID = random.randint(1,9999999999999999)
     print(randomID)
@@ -138,10 +148,15 @@ def createReply(author, parent, content):
         db.close()
         return "reply w/o parent created"
 
+# def replyContent(replyID):
+#     '''returns the content of a given reply'''
+#-------------------------------------------------REPLIES BOTTOM-------------------------------------------------
 
-#simulated scenario by commenting out each print in order:
-#print(createReply(217412924, 0, "I like doggo" )) #no parent. replyID = 8689533145667125 based off print statement
-#print(createReply(217412923, 8689533145667125, "I like doggo 2" )) #with parent from above, replyID = 2904793441211501
-print(findParent(2904793441211501)) #expected to be replyID from the first print statement - CONFIRMED
-#print(createReply(217412923, 5005249477290031, "I like doggo" ))
-#print(createReply(217412923, 5005249477290031, "I like doggo" ))
+
+#simulated scenario by commenting out each print in order(THESE REPLY ID'S WILL BE DIFFERENT EACH TIME BC OF RANDOM NUM GENERATION):
+#print(createReply(217412924, 0, "I like doggo" )) #no parent. replyID = 3775107346189140 based off print statement
+#print(findParent(3775107346189140)) #expected to have no parent - CONFIRMED
+#print(createReply(217412923, 3775107346189140, "I like doggo 2" )) #with parent from above, replyID = 1561798482773402
+#print(findParent(1561798482773402)) #expected to be replyID from the first print statement - CONFIRMED
+#print(createReply(217412923, 1561798482773402, "I like doggo2" )) #parent is the child of the parent from first reply replyID = 8419834655865147
+#print(findParent(8419834655865147)) #expected to be 1561798482773402 - CONFIRMED
