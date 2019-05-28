@@ -1,14 +1,17 @@
 import sqlite3, random
 
-def createPosts():
+def createDatabase():
+
+    '''Method to initialize our site's database'''
+
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
 
     #authorID may just be set to osis for simplicity
     c.execute("""CREATE TABLE IF NOT EXISTS posts(
                 postId INTEGER PRIMARY KEY AUTOINCREMENT,
-                postType TEXT,
-                postInfo TEXT,
+                postTitle TEXT,
+                postContent TEXT,
                 authorID INTEGER,
                 tags TEXT
                 )"""
@@ -29,20 +32,25 @@ def createPosts():
                 pass TEXT,
                 numPost INTEGER,
                 numDeleted INTEGER,
-                numBest INTEGER
+                numBest INTEGER,
+                identity TEXT
                 )"""
                 )
+
     db.commit()
     db.close()
 
-createPosts()
+createDatase()
 
 
+'''METHODS RELATING TO ACCOUNT CREATION'''
 #-------------------------------------------------ACOUNT CREATION TOP-------------------------------------------------
 def checkInfo(user, pswd):
 
-    '''This method checks if the user and password combination
-    is valid, and returns error msgs based off that check.'''
+    '''
+    This method checks if the user and password combination
+    is valid, and returns error msgs based off that check.
+    '''
 
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
@@ -69,9 +77,11 @@ def checkInfo(user, pswd):
 
 def createAccount(user,pswd,passConf,firstN,lastN):
 
-    '''This method checks inputs when creating an acc
+    '''
+    This method checks inputs when creating an acc
     to make sure user didn't mess up anywhere in the process. If everything
-    is good, then the account will be created.'''
+    is good, then the account will be created.
+    '''
 
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
@@ -105,6 +115,7 @@ def createAccount(user,pswd,passConf,firstN,lastN):
 #-------------------------------------------------ACOUNT CREATION BOTTOM-------------------------------------------------
 
 
+'''METHODS RELATING TO REPLIES'''
 #-------------------------------------------------REPLIES TOP-------------------------------------------------
 def findParent(reply):
 
@@ -148,9 +159,14 @@ def createReply(author, parent, content):
         db.close()
         return "reply w/o parent created"
 
-# def replyContent(replyID):
-#     '''returns the content of a given reply'''
-#-------------------------------------------------REPLIES BOTTOM-------------------------------------------------
+def replyContent(replyID):
+    '''returns the content of a given reply'''
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+    for i in c.execute("SELECT replyContent FROM replies WHERE replyID = ?", (replyID,)):
+        db.close()
+        return i[0]
+
 
 
 #simulated scenario by commenting out each print in order(THESE REPLY ID'S WILL BE DIFFERENT EACH TIME BC OF RANDOM NUM GENERATION):
@@ -160,3 +176,29 @@ def createReply(author, parent, content):
 #print(findParent(1561798482773402)) #expected to be replyID from the first print statement - CONFIRMED
 #print(createReply(217412923, 1561798482773402, "I like doggo2" )) #parent is the child of the parent from first reply replyID = 8419834655865147
 #print(findParent(8419834655865147)) #expected to be 1561798482773402 - CONFIRMED
+#print(replyContent(1561798482773402)) #expect I like doggo 2 - CONFIRMED
+
+#-------------------------------------------------REPLIES BOTTOM-------------------------------------------------
+
+
+
+'''METHODS RELATING TO POSTS'''
+#-------------------------------------------------POSTS TOP----------------------------------------------------
+
+def createPost(title, content, author, tag):
+
+    '''Method to add an user's post into the database'''
+
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+
+    post = "INSERT INTO posts(postTitle, postContent, authorID, tags) VALUES(?, ?, ?, ?)"
+    c.execute(post,(title, content, author, tag))
+    db.commit()
+    db.close()
+
+    return "post created"
+
+
+
+#-------------------------------------------------POSTS BOTTOM-------------------------------------------------
