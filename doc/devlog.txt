@@ -99,4 +99,11 @@ boL, simonT -- 13:20 2019-05-28
 -added method to check content of reply and adding new posts
 -created signup page
 --------------------------------------------------------------
+
+theodoreP -- 11:55 2019-05-28
+--------------------------------------------------------------
+did some of this in class but idc
+functions to actually insert and delet and save code snippets now, integrable into adding posts will talk to gamers tommorow about actually doing that...
+--------------------------------------------------------------
+
 ==============================================================
