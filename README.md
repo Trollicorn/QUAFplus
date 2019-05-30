@@ -15,14 +15,14 @@ to install: `pip install flask-mail`
 
 ## Launch Instructions
 
-### Localhost
+### Localhost (install and run on localhost)
 - clone the repository and `cd` into it
 - activate virtual environment
 - do `pip install -r requirements.txt` to install requireled libraries
 - do `python3 QUAFplus/__init__.py`to run the app
 - go to 127.0.0.1 to view the app
 
-### Apache2
+### Apache2 (install and run on Apache2)
 - `cd` into `/var/www/` by running `cd /var/www`
 - clone the repository and `cd` into it
 - in the `QUAFplus.conf` file, change the *ServerName* to where users will go to use the app
