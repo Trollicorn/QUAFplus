@@ -28,6 +28,10 @@ def authenticate():
     """
     return render_template("signup.html")
 
+@app.route('/create')
+def ok():
+    return render_template("create.html")
+
 if __name__ == "__main__":
     app.debug = True
     app.run()

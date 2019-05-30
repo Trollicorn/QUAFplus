@@ -1,26 +1,84 @@
 <!DOCTYPE html>
 <html>
-<head>
-
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>The Better QAF</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <link rel="stylesheet" href="static/indexLayout.css">
-
-</head>
-<body>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>QUAF+</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='indexLayout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='code_snippets.css') }}" type="text/css"/>
+    <script src="{{ url_for('static', filename='skulpt.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='skulpt-stdlib.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='indexLayout.js') }}" type="text/javascript"></script>
+  </head>
+  <body>
     <div class="header" style="background-color:#90FF00;padding-bottom:10px;margin-bottom:10px;padding-top:8px;">
-  <div class="row">
-    <div class="col-sm" style="padding-left:20px;text-align:center;">
-      <h1> Link to the Home Page </h1>
+      <div class="row">
+	<div class="col-sm" style="padding-left:20px;text-align:center;">
+	  <h1> Link to the Home Page </h1>
+	</div>
+	<div class="col-sm">
+	</div>
+	
+	<div class="col-sm" style="text-align:right;padding-right:20px">
+		Currently Signed in<br>
+		Welcome, insert_username_here
+	</div>
+      </div>
     </div>
-    <div class="col-sm">
-    </div>
-    <div class="col-sm" style="text-align:right;padding-right:20px">
-      
-    </div>
-  </div>
-    </div>
-    
-</body>
+    {% block body %}{% endblock %}
+
+    <script id="py_snip_edit_source">
+      <div class="row no-gutters">
+	<div class="col-1">
+	  <div class="code_run" style="height:100%">
+	    <table style="height:100%;width:100%"><tr style="text-align:center;width:100%;">
+		<td class="align-middle text-center" style="text-align:center;width:100%;padding-left:5%;"><i class="fas fa-play text-center"></i></td>
+	    </tr></table>
+	  </div>
+	</div>
+	<div class="col-10" height="100%">
+	  <div class="code_title">
+	    <span class="code_title_inp_wrap"><input type="text" placeholder="Title" class="code_title_inp"></span>
+	    <span class="code_type">PY</span>
+	  </div>
+	</div>
+	<div class="col-1">
+	  <div class="code_title" style="height:100%">
+	    <table style="height:100%;width:100%" class="code_delete"><tr style="text-align:center;width:100%;">
+		<td class="align-middle text-center" style="text-align:center;width:100%;padding-left:5%;">
+		  <span><i class="fas fa-times text-center"></i></span>
+		</td>
+	    </tr></table>
+	  </div>
+	</div>
+      </div>
+      <textarea class="code_in" style="width:100%;"></textarea>
+      <br>
+      <div class="code_out" height="200px">
+	<br>
+      </div>
+    </script>
+    <script id="py_snip_source">
+      <div class="row no-gutters">
+	<div class="col-1">
+	  <div class="code_run" style="height:100%">
+	    <table style="height:100%;width:100%"><tr style="text-align:center;width:100%;">
+		<td class="align-middle text-center" style="text-align:center;width:100%;padding-left:5%;"><i class="fas fa-play text-center"></i></td>
+	    </tr></table>
+	  </div>
+	</div>
+	<div class="col-11" height="100%">
+	  <div class="code_title"><span class="code_title_inp"></span>
+	    <span class="code_type">PY</span>
+	  </div>
+	</div>
+      </div>
+      <div class="code_in"></div>
+      <br>
+      <div class="code_out" height="200px">
+	<br>
+      </div>
+    </script>
+
+  </body>
 </html>

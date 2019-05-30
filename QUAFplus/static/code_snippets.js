@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     var mk_py_eventify=(e,daddy=document.getElementById("code_edits"))=>{
 	e.addEventListener("click",()=>{
 	    let ok=document.createElement('div');
-	    ok.setAttribute("class",'py_snip');
+	    ok.setAttribute("class",'py_snip col-lg-4 col-md-8 col-sm-12');
 	    ok.innerHTML=document.getElementById("py_snip_edit_source").innerHTML;
 	    daddy.appendChild(ok);
 	    py_eventify(ok);
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 	var body=s.substring(r2+1,nd);
 	if(lang=="py"){
 	    let ok=document.createElement('div');
-	    ok.setAttribute("class","py_snip");
+	    ok.setAttribute("class","py_snip col-lg-4 col-md-8 col-sm-12");
 	    ok.innerHTML=document.getElementById("py_snip_source").innerHTML;
 	    ok.getElementsByClassName("code_title_inp").item(0).innerHTML=title==""?lang+" code snippet":title;
 	    ok.getElementsByClassName("code_in").item(0).innerHTML=body;
