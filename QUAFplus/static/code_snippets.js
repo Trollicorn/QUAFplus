@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     var mk_py_eventify=(e,daddy=document.getElementById("code_edits"))=>{
 	e.addEventListener("click",()=>{
 	    let ok=document.createElement('div');
-	    ok.setAttribute("class",'py_snip col-lg-4 col-md-8 col-sm-12');
+	    ok.setAttribute("class",'py_snip col-lg-4 col-md-6 col-sm-12');
 	    ok.innerHTML=document.getElementById("py_snip_edit_source").innerHTML;
 	    daddy.appendChild(ok);
 	    py_eventify(ok);
