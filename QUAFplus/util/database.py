@@ -40,7 +40,7 @@ def createDatabase():
     db.commit()
     db.close()
 
-createDatase()
+createDatabase()
 
 
 '''METHODS RELATING TO ACCOUNT CREATION'''
@@ -202,3 +202,17 @@ def createPost(title, content, author, tag):
 
 
 #-------------------------------------------------POSTS BOTTOM-------------------------------------------------
+
+'''METHODS RELATING TO USER INFO'''
+#-------------------------------------------------USER INFO TOP-------------------------------------------------
+def sortBy(column):
+
+    '''Method to return the database sorted by the column'''
+
+    '''should work probably hopefully'''
+
+    db = sqlite3.connect("../data/quaf.db",row_factory=sqlite3.Row)
+    c = db.cursor()
+    thing = c.execute("SELECT * FROM users").fetchall()
+    thing.sort(key=lambda x: x[column])
+    return thing
