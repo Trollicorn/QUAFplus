@@ -1,10 +1,22 @@
 from flask import Flask, render_template, url_for, redirect, send_from_directory, request
-
+from flask_mail import Mail, Message
+from passlib.hash import sha256_crypt
+import pp
+import datetime
 #from util import database
 
 app = Flask(__name__)
 
 DIR = "/var/www/QUAFplus/QUAFplus/"
+#mail stuff
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465  #using SSL, do 587 for TLS
+app.config['MAIL_USERNAME'] = pp.MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = pp.MAIL_PASSWORD
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 @app.route('/')
 def main():
