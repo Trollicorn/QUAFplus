@@ -13,7 +13,8 @@ def createDatabase():
                 postTitle TEXT,
                 postContent TEXT,
                 authorID INTEGER,
-                tags TEXT
+                tags TEXT,
+                postDate TEXT
                 )"""
                 )
 
@@ -28,12 +29,13 @@ def createDatabase():
     c.execute("""CREATE TABLE IF NOT EXISTS users(
                 firstN TEXT,
                 lastN TEXT,
-                osis INTEGER,
+                user INTEGER,
                 pass TEXT,
                 numPost INTEGER,
                 numDeleted INTEGER,
                 numBest INTEGER,
-                identity TEXT
+                identity TEXT,
+                description TEXT
                 )"""
                 )
 
@@ -43,8 +45,8 @@ def createDatabase():
 createDatabase()
 
 
-'''METHODS RELATING TO ACCOUNT CREATION'''
-#-------------------------------------------------ACOUNT CREATION TOP-------------------------------------------------
+'''METHODS RELATING TO ACCOUNT CREATION & USERS'''
+#-------------------------------------------------ACOUNT CREATION & USERS TOP-------------------------------------------------
 def checkInfo(user, pswd):
 
     '''
@@ -75,20 +77,26 @@ def checkInfo(user, pswd):
 # print(checkInfo(217412923, "bobobobo"))
 # print(checkInfo(2174123, "bobo"))
 
-def createAccount(user,pswd,passConf,firstN,lastN):
+def createAccount(user,pswd,passConf,firstN,lastN, identity, description):
 
     '''
     This method checks inputs when creating an acc
     to make sure user didn't mess up anywhere in the process. If everything
     is good, then the account will be created.
+
+    The student's osis will be used as the user. If their identity is a teacher,
+    the osis will not be necessary.
     '''
 
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
-    #checks if user is an osis
-    if((not isinstance(user, int)) or (len(str(user))!= 9) ):
-        db.close()
-        return "Not an integer or not the right length for osis"
+
+    #checks for correctness of osis input only if student
+    if identity == "student":
+        #checks if user is an osis
+        if((not isinstance(user, int)) or (len(str(user))!= 9) ):
+            db.close()
+            return "Not an integer or not the right length for osis"
 
     #checks if the username already exists
     for i in c.execute("SELECT osis FROM users WHERE osis = ?",(user,)):
@@ -101,8 +109,8 @@ def createAccount(user,pswd,passConf,firstN,lastN):
             db.close()
             return "Passwords do not match - Try again"
         #if password confirmation succeeds add the user to the database
-        userdb="INSERT INTO users(firstN, lastN, osis, pass, numPost, numDeleted, numPost) VALUES( ?, ?, ?, ?, ?, ?, ?)"
-        c.execute(userdb,(firstN,lastN, user,pswd, 0, 0 , 0))
+        userdb="INSERT INTO users(firstN, lastN, osis, pass, numPost, numDeleted, numPost, identity, description) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        c.execute(userdb,(firstN,lastN, user, pswd, 0, 0 , 0, identity, description))
         db.commit()
         db.close()
         return "Account creation successful"
@@ -112,12 +120,26 @@ def createAccount(user,pswd,passConf,firstN,lastN):
 # print(createAccount("217412923", "bo", "bo", "hello", "lu"))
 # print(createAccount(2174123, "bobo", "bobo", "bo", "lu"))
 # print(createAccount(217412223, "bobo", "bobo", "bo", "lu"))
-#-------------------------------------------------ACOUNT CREATION BOTTOM-------------------------------------------------
+# print(createAccount(12345678, "simon", "simon", "bo", "lu", "student", "I am a very smart dood")) #correctly provides an error
+# print(createAccount(None, "brown", "brown", "bo", "lu", "teacher", "I am a very smart dood")) #does not have an error bc its a teacher
+
+def sortBy(column):
+
+    '''Method to return the database sorted by the column'''
+
+    '''should work probably hopefully'''
+
+    db = sqlite3.connect("../data/quaf.db",row_factory=sqlite3.Row)
+    c = db.cursor()
+    thing = c.execute("SELECT * FROM users").fetchall()
+    thing.sort(key=lambda x: x[column])
+    return thing
+#-------------------------------------------------ACOUNT CREATION & USER BOTTOM-------------------------------------------------
 
 
 '''METHODS RELATING TO REPLIES'''
 #-------------------------------------------------REPLIES TOP-------------------------------------------------
-def findParent(reply):
+def check_Parent(reply):
 
     '''Helper method to return parent(if it exists) of a reply'''
 
@@ -127,7 +149,7 @@ def findParent(reply):
         db.close()
         return i[0]
 
-#print(findParent(226311524667076))
+#print(checkParent(226311524667076))
 
 
 def createReply(author, parent, content):
@@ -159,7 +181,7 @@ def createReply(author, parent, content):
         db.close()
         return "reply w/o parent created"
 
-def replyContent(replyID):
+def check_replyContent(replyID):
     '''returns the content of a given reply'''
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
@@ -171,12 +193,12 @@ def replyContent(replyID):
 
 #simulated scenario by commenting out each print in order(THESE REPLY ID'S WILL BE DIFFERENT EACH TIME BC OF RANDOM NUM GENERATION):
 #print(createReply(217412924, 0, "I like doggo" )) #no parent. replyID = 3775107346189140 based off print statement
-#print(findParent(3775107346189140)) #expected to have no parent - CONFIRMED
+#print(check_Parent(3775107346189140)) #expected to have no parent - CONFIRMED
 #print(createReply(217412923, 3775107346189140, "I like doggo 2" )) #with parent from above, replyID = 1561798482773402
-#print(findParent(1561798482773402)) #expected to be replyID from the first print statement - CONFIRMED
+#print(check_Parent(1561798482773402)) #expected to be replyID from the first print statement - CONFIRMED
 #print(createReply(217412923, 1561798482773402, "I like doggo2" )) #parent is the child of the parent from first reply replyID = 8419834655865147
-#print(findParent(8419834655865147)) #expected to be 1561798482773402 - CONFIRMED
-#print(replyContent(1561798482773402)) #expect I like doggo 2 - CONFIRMED
+#print(check_Parent(8419834655865147)) #expected to be 1561798482773402 - CONFIRMED
+#print(check_replyContent(1561798482773402)) #expect I like doggo 2 - CONFIRMED
 
 #-------------------------------------------------REPLIES BOTTOM-------------------------------------------------
 
@@ -185,34 +207,57 @@ def replyContent(replyID):
 '''METHODS RELATING TO POSTS'''
 #-------------------------------------------------POSTS TOP----------------------------------------------------
 
-def createPost(title, content, author, tag):
+def createPost(title, content, author, tag, date):
 
     '''Method to add an user's post into the database'''
 
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
 
-    post = "INSERT INTO posts(postTitle, postContent, authorID, tags) VALUES(?, ?, ?, ?)"
-    c.execute(post,(title, content, author, tag))
+    post = "INSERT INTO posts(postTitle, postContent, authorID, tags, postDate) VALUES(?, ?, ?, ?, ?)"
+    c.execute(post,(title, content, author, tag, date))
     db.commit()
     db.close()
 
     return "post created"
 
 
+# print(createPost("Test1", "blehbleh", 217412923, "TESTRUN", "Jun 5, 2019")) #works
+# print(createPost("Test1", "blehblehbleh", 217412923, "TESTRUN", "Jun 5, 2019"))
+# print(createPost("Test2", "blehbleh", 217412923, "TESTRUN", "Jun 5, 2019"))
+# print(createPost("Test1", "blahblah", 123456789, "TESTRUN", "Jun 5, 2019"))
+# print(createPost("Test2", "blahblahblah", 123456789, "TESTRUN", "Jun 5, 2019"))
+
+def check_postContent(title, author):
+
+    '''checks the content of a post found using the title of post and the author of the post'''
+
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+
+    for i in c.execute("SELECT postContent FROM posts WHERE postTitle = ? AND authorID = ?", (title, author,)):
+        db.close()
+        return i[0]
+
+def check_postDate(title, author):
+
+    '''checks the date of a post found using the title of post and the author of the post'''
+
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+
+    for i in c.execute("SELECT postDate FROM posts WHERE postTitle = ? AND authorID = ?", (title, author,)):
+        db.close()
+        return i[0]
+
+
+
+# print(check_postContent("Test1", 217412923))
+# print(check_postContent("Test2", 217412923))
+# print(check_postContent("Test1", 123456789))
+# print(check_postContent("Test2", 123456789))
+# print(check_postDate("Test2", 217412923))
+# print(check_postDate("Test1", 123456789))
+
 
 #-------------------------------------------------POSTS BOTTOM-------------------------------------------------
-
-'''METHODS RELATING TO USER INFO'''
-#-------------------------------------------------USER INFO TOP-------------------------------------------------
-def sortBy(column):
-
-    '''Method to return the database sorted by the column'''
-
-    '''should work probably hopefully'''
-
-    db = sqlite3.connect("../data/quaf.db",row_factory=sqlite3.Row)
-    c = db.cursor()
-    thing = c.execute("SELECT * FROM users").fetchall()
-    thing.sort(key=lambda x: x[column])
-    return thing
