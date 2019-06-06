@@ -39,7 +39,8 @@ to install: `pip install flask-mail`
 - in the `QUAFplus.conf` file, change the *ServerName* to where users will go to use the app
 - do `chgrp -R www-data QUAFplus` and `chmod -R g+w QUAFplus` to give the app permission to do stuff
 - move the `QUAFplus.conf` file into the apache config by doing `mv QUAFplus.conf ../../../etc/apache2/sites-available`
-- go to the *sites-available* directory and do `a2ensite QUAFplus`
+- do `cd ../../../etc/apache2/sites-available` to go to the *sites-available* directory 
+` do `a2ensite QUAFplus`
 - do `service apache2 reload`
 - go to whatever place you put in *ServerName* in the `QUAFplus.conf` file to view the app
 - follow [these instructions](https://docs.google.com/document/d/12b4gf9_1EiJDt6ValtoDVsZPLhGhyOdmnW4n2Xg5E-A/edit)
