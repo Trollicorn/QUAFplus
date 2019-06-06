@@ -1,9 +1,9 @@
 import datetime
 
-from flask import Flask, render_template, url_for, redirect, send_from_directory, request
+from flask import Flask, render_template, url_for, redirect, send_from_directory, request, flash
 from flask_mail import Mail, Message
 from passlib.hash import sha256_crypt
-
+import string, random
 try:
     from QUAFplus import pp as pp
 except ModuleNotFoundError:
@@ -21,7 +21,7 @@ app.config['MAIL_USERNAME'] = pp.MAIL_USERNAME
 app.config['MAIL_PASSWORD'] = pp.MAIL_PASSWORD
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-
+app.config['MAIL_DEFAULT_SENDER'] = pp.MAIL_USERNAME
 mail = Mail(app)
 
 @app.route('/')
@@ -46,6 +46,40 @@ def authenticate():
     """
     return render_template("signup.html")
 
+@app.route('/register',methods=['POST','GET'])
+def register():
+    '''
+    should be passed email (user), password, confirmation password
+    '''
+    if not ('user' in request.form.keys() and 'pass' in request.form.keys() and 'passConf' in request.form.keys()):
+        #flash some message, fill out all fields
+        return render_template('signup.html')
+    pw = request.form['pass']
+    pwc = request.form['passConf']
+    email = request.form['user'].replace(' ','')
+    at = email.find('@')
+    if at != -1:
+        domain = email[at:]
+    if at == -1 or domain != '@stuy.edu': #not valid stuy.edu
+        flash('enter valid @stuy.edu address')
+        return render_template('signup.html')
+    if pw != pwc:
+        flash("passwords don't match")
+        return render_template('signup.html')
+    msg = Message('QUAF+ Verification',recipients = [email])
+    code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
+    msg.body = 'Your QUAF+ verification code is' + code +
+              '. Go back to the site and go to the /verify route to verify your account.'+
+              '\n\n If you recieved this message in error, please ignore/delete this email.'
+    passmail = email + pw
+    passhash = sha256_crypt.hash(passmail)
+    
+
+    mail.send(msg)
+
+    return render_template('signup.html')
+
+
 @app.route('/create',methods=["POST","GET"])
 def ok():
     if request.method=="POST":
@@ -59,7 +93,7 @@ def ok():
 def okok():
     print(request.form)
     return redirect('/')
-    
+
 
 if __name__ == "__main__":
     app.debug = True
