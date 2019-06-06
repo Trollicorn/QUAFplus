@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, send_from_directory, request
 from flask_mail import Mail, Message
 from passlib.hash import sha256_crypt
-import pp
+from QUAFplus import pp as pp
 import datetime
 #from util import database
 
