@@ -17,14 +17,25 @@ to install: `pip install flask-mail`
 
 ### Localhost (install and run on localhost)
 - clone the repository and `cd` into it
+- cd into the innter `QUAFplus/directory`
+- create a copy of the file named `pp.py.example` and call it `pp.py`
+- in the `pp.py` file, change the value of `MAIL_USERNAME` to a valid gmail email address that you have access to (this email address will be used to send emails)
+- in the `pp.py` file, change the value of `MAIL_PASSWORD` to the password of the gmail address used for `MAIL_USERNAME` (don't worry, the `pp.py` file is not tracked by github, and the only way for someone to see your account credentials would be to open the file itself locally)
+- do `cd ..` to cd back to the outer QUAFplus directory
 - activate virtual environment
-- do `pip install -r requirements.txt` to install requireled libraries
+- do `pip3 install -r requirements.txt` to install required libraries
 - do `python3 QUAFplus/__init__.py`to run the app
 - go to 127.0.0.1 to view the app
 
 ### Apache2 (install and run on Apache2)
 - `cd` into `/var/www/` by running `cd /var/www`
 - clone the repository and `cd` into it
+- cd into the innter `QUAFplus/directory`
+- create a copy of the file named `pp.py.example` and call it `pp.py`
+- in the `pp.py` file, change the value of `MAIL_USERNAME` to a valid gmail email address that you have access to (this email address will be used to send emails)
+- in the `pp.py` file, change the value of `MAIL_PASSWORD` to the password of the gmail address used for `MAIL_USERNAME` (don't worry, the `pp.py` file is not tracked by github, and the only way for someone to see your account credentials would be to open the file itself locally)
+- do `cd ..` to cd back to the outer QUAFplus directory
+- do `pip3 install -r requirements.txt` to install required libraries
 - in the `QUAFplus.conf` file, change the *ServerName* to where users will go to use the app
 - do `chgrp -R www-data QUAFplus` and `chmod -R g+w QUAFplus` to give the app permission to do stuff
 - move the `QUAFplus.conf` file into the apache config by doing `mv QUAFplus.conf ../../../etc/apache2/sites-available`
