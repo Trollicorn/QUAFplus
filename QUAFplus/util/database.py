@@ -27,6 +27,7 @@ def createDatabase():
                 )
 
     c.execute("""CREATE TABLE IF NOT EXISTS users(
+                userid INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstN TEXT,
                 lastN TEXT,
                 user INTEGER,
