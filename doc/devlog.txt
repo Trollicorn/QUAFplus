@@ -116,4 +116,15 @@ boL -- 13:21 2019-06-05
 -more user methods and post methods - LOST A LOT OF WORK THAT WAS OVERWRITTEN BY MERGE
 --------------------------------------------------------------
 
+uddinM -- 11:49 2019-06-06
+--------------------------------------------------------------
+- on the sdfp launch test of QUAF+ by VIAQom:
+ - the other team followed our launch instructions successfully. 
+ - they recieved an error regarding installing requirements because when i `pip freeze`'d i did not notice something called `pkg-resources 0.0.0` which could not be installed using `pip install`
+ - we  were notified and the problem was quickly resolved
+ - they also seemed to interact with our website, which does not have many of the features integrated in
+- made launcher instructions more clear from feedback received
+--------------------------------------------------------------
+
+
 ==============================================================
