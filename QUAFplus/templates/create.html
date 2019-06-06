@@ -1,23 +1,25 @@
 {% extends "base.html" %}
-1;5202;0c
 {% block body %}
 <div style="padding:10px">
   <div class="row">
     <div class="col-10">
       <div class="form-group">
-	<input type="title" class="form-control" id="exampleFormControlInput1" placeholder="Post Title" style="width:100%;">
+		<input type="title" class="form-control" id="new_post_title" placeholder="Post Title" style="width:100%;">
       </div>
     </div>
     <div class="col-2">
-      <div class="btn btn-success" style="width:100%;">Create Post</div>
+      <div class="btn btn-success" style="width:100%;" id="make_post">Create Post</div>
     </div>
   </div>
   <div class="form-group">
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+    <textarea class="form-control" id="new_post_body" rows="3"></textarea>
   </div>
   <div class="code_controler_buttons">
     <div class="new_py_snip">New Py Snip</div>
   </div>
   <div id="code_edits" class="row no-gutters"></div>
 </div>
+<script id="parent">{{ parent }}</script>
+<script id="server">{{ server }}</script>
+
 {% endblock %}

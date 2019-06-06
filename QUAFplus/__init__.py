@@ -1,7 +1,10 @@
 from flask import Flask, render_template, url_for, redirect, send_from_directory, request
 from flask_mail import Mail, Message
 from passlib.hash import sha256_crypt
-from QUAFplus import pp as pp
+try:
+    from QUAFplus import pp as pp
+except ModuleNotFoundError:
+    import pp
 import datetime
 #from util import database
 
@@ -40,9 +43,20 @@ def authenticate():
     """
     return render_template("signup.html")
 
-@app.route('/create')
+@app.route('/create',methods=["POST","GET"])
 def ok():
-    return render_template("create.html")
+    if request.method=="POST":
+        parent=request.form["parent"]if"parent"in request.form else 0
+        server=request.form["server"]if"server"in request.form else 0
+    else:
+        parent=request.args["parent"]if"parent"in request.args else 0
+        server=request.args["server"]if"server"in request.args else 0
+    return render_template("create.html",parent=parent,server=server)
+@app.route('/make_post',methods=["POST"])
+def okok():
+    print(request.form)
+    return redirect('/')
+    
 
 if __name__ == "__main__":
     app.debug = True
