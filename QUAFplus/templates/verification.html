@@ -10,6 +10,15 @@
 
 <div style="width:50%;text-align:center;margin:auto;margin-top:50px;border:solid;background-color:white;">
 <form>
+  <br>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{'danger' if message[:7]!='Logged ' else 'success'}}" role="alert">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+  <br>
   <div class="form-group">
     <label for="firstN">First Name</label>
     <input type="text" class="form-control" id="firstN">
