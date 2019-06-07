@@ -8,7 +8,7 @@ try:
     from QUAFplus import pp as pp
 except ModuleNotFoundError:
     import pp
-from util import usablecode as database
+from .util import usablecode as database
 
 #from util import database
 
@@ -83,7 +83,7 @@ def register():
     print(request.form)
     if not ('email' in formkeys):
         flash("Fill out all fields")
-        return render_template('verification.html')
+        return render_template('signup.html')
     email = request.form['email'].replace(' ','')
     at = email.find('@')
     if at != -1:
