@@ -3,7 +3,7 @@ import datetime
 from flask import Flask, render_template, url_for, redirect, send_from_directory, request,flash,Request,session,make_response
 from flask_mail import Mail, Message
 from passlib.hash import sha256_crypt
-import string, random
+import string, random, os
 try:
     from QUAFplus import pp as pp
 except ModuleNotFoundError:
@@ -14,9 +14,10 @@ from util import usablecode as database
 
 app = Flask(__name__)
 
-DIR = "/var/www/QUAFplus/QUAFplus/"
+DIR = os.path.dirname(__file__) or '.'
 
-app.secret_key = pp.secret_key
+with open(DIR+'/secret.txt','rb') as f:
+    app.secret_key=f.read()
 
 #mail stuff
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'

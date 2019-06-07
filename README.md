@@ -1,5 +1,5 @@
 # QUAF+ (self-titled)
-[![Build Status](https://travis-ci.com/Trollicorn/QUAFplus.svg?branch=master)](https://travis-ci.com/Trollicorn/QUAFplus)
+
 PM Mohammed Uddin, Bo Lu, Theodore Peters, Simon Tsui
 
 ## Summary
@@ -18,6 +18,7 @@ to install: `pip install flask-mail`
 ### Localhost (install and run on localhost)
 - clone the repository and `cd` into it
 - cd into the innter `QUAFplus/directory`
+- do `python3 xtra.py` to generate  secret key
 - create a copy of the file named `pp.py.example` and call it `pp.py`
 - in the `pp.py` file, change the value of `MAIL_USERNAME` to a valid gmail email address that you have access to (this email address will be used to send emails)
 - in the `pp.py` file, change the value of `MAIL_PASSWORD` to the password of the gmail address used for `MAIL_USERNAME` (don't worry, the `pp.py` file is not tracked by github, and the only way for someone to see your account credentials would be to open the file itself locally)
@@ -31,6 +32,7 @@ to install: `pip install flask-mail`
 - `cd` into `/var/www/` by running `cd /var/www`
 - clone the repository and `cd` into it by doing `cd QUAFplus`
 - cd into the inner QUAFplus directory by doing `cd QUAFplus` again
+- do `python3 xtra.py` to generate a secret key
 - create a copy of the file named `pp.py.example` and call it `pp.py`
 - in the `pp.py` file, change the value of `MAIL_USERNAME` to a valid gmail email address that you have access to (this email address will be used to send emails)
 - in the `pp.py` file, change the value of `MAIL_PASSWORD` to the password of the gmail address used for `MAIL_USERNAME` (don't worry, the `pp.py` file is not tracked by github, and the only way for someone to see your account credentials would be to open the file itself locally)
