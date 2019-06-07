@@ -83,7 +83,7 @@ def register():
     print(request.form)
     if not ('email' in formkeys):
         flash("Fill out all fields")
-        return render_template('signup.html')
+        return render_template('verification.html')
     email = request.form['email'].replace(' ','')
     at = email.find('@')
     if at != -1:
@@ -236,5 +236,6 @@ def server_leave():
 
 
 if __name__ == "__main__":
+    #database.db_reset()
     app.debug = True
     app.run()

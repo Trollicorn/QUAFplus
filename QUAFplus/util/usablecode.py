@@ -236,7 +236,7 @@ def add_nonverified(email, code):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("INSERT INTO nonverified(email, code) VALUES(?,?)",
-              (email,  code,))
+              (email, code,))
     db.commit()
     db.close()
     return "added"
