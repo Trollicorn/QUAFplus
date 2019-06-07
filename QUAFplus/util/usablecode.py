@@ -235,7 +235,7 @@ def get_uid(email):
 def add_nonverified(email, code):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("INSERT INTO nonverified(email, code) VALUES(?,?,?,?)",
+    c.execute("INSERT INTO nonverified(email, code) VALUES(?,?)",
               (email, code,))
     db.commit()
     db.close()
