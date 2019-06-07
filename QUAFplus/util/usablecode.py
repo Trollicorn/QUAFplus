@@ -111,14 +111,14 @@ def parents(lowid, child=[]):
 def user_servers(uid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    servers = c.execute("SELECT id, users FROM SERVERS;").fetchall()
+    servers = c.execute("SELECT id, members FROM SERVERS;").fetchall()
     return[o[0]for o in servers if uid in[int(i)for i in o[1].split(",")]]
 
 
 def user_servers_dict(uid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    servers = c.execute("SELECT id, users, name FROM SERVERS;").fetchall()
+    servers = c.execute("SELECT id, members, name FROM SERVERS;").fetchall()
     return[{'id': o[0], 'name':o[2]}for o in servers if uid in[int(i)for i in o[1].split(",")]]
 
 
@@ -138,7 +138,7 @@ def check_user(uid, serverid):
         return False
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    o = c.execute("SELECT users FROM SERVERS where id=?;",
+    o = c.execute("SELECT members FROM SERVERS where id=?;",
                   (serverid,)).fetchone()
     db.close()
     return str(uid)in o[0].split(",")
@@ -148,7 +148,7 @@ def join_server(uid, serverid):
     if not check_user(uid, serverid):
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        a = c.execute("SELECT users FROM servers where id=?;",
+        a = c.execute("SELECT members FROM servers where id=?;",
                       (serverid,)).fetchone()[0]+","+str(uid)
         c.execute("UPDATE servers SET users = ? WHERE id=?;", (a, serverid))
         db.commit()
@@ -164,7 +164,7 @@ def leave_server(uid, serverid):
     if check_user(uid, serverid):
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        a = c.execute("SELECT users FROM servers WHERE id=?;",
+        a = c.execute("SELECT members FROM servers WHERE id=?;",
                       (serverid,)).fetchone()[0].split(",")
         a.remove(str(uid))
         c.execute("UPDATE servers SET users = ? WHERE id=?;",

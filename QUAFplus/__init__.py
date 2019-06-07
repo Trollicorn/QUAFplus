@@ -8,7 +8,7 @@ try:
     from QUAFplus import pp as pp
 except ModuleNotFoundError:
     import pp
-from .util import usablecode as database
+from util import usablecode as database
 
 #from util import database
 
