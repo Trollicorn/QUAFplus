@@ -9,7 +9,7 @@ try:
 except ModuleNotFoundError:
     import pp
 from util import usablecode as database
-    
+
 #from util import database
 
 app = Flask(__name__)
@@ -52,8 +52,13 @@ def register():
     '''
     should be passed email (user), password, confirmation password
     '''
-    if not ('user' in request.form.keys() and 'pass' in request.form.keys() and 'passConf' in request.form.keys()):
-        #flash some message, fill out all fields
+    formkeys = request.form.keys()
+    if not ('user' in formkeys and
+            'pass' in formkeys and
+            'passConf' in formkeys and
+            'fName' in formkeys and
+            'lName' in formkeys):
+        flash(fill out all fields)
         return render_template('signup.html')
     pw = request.form['pass']
     pwc = request.form['passConf']
@@ -74,7 +79,8 @@ def register():
               '\n\n If you recieved this message in error, please ignore/delete this email.'
     passmail = email + pw
     passhash = sha256_crypt.hash(passmail)
-    
+
+    addNonverified(email,passhash,code)
 
     mail.send(msg)
 

@@ -3,16 +3,18 @@ import datetime
 
 DB_FILE="../data/quaf.db"
 
-                     
+
 def db_reset():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("DROP TABLE IF EXISTS posts;")
     c.execute("CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, snips TEXT, author INT, parent INT, tags TEXT, date TEXT, server INTEGER, answered INTEGER, best INTEGER, question INTEGER);");
     c.execute("DROP TABLE IF EXISTS users;")
-    c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, user INTEGER, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER, identity TEXT, description TEXT);")
+    c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, email TEXT, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER);")
     c.execute("DROP TABLE IF EXISTS servers;")
     c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, members TEXT, admins TEXT, password TEXT);")
+    c.execute("DROP TABLE IF EXISTS nonverified;")
+    c.execute("CREATE TABLE nonverified(email TEXT, pass TEXT, code TEXT);")
     db.commit()
     db.close()
 def tree(postid):
