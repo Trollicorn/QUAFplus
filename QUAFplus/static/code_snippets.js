@@ -93,7 +93,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 	var lnktothing=document.getElementById("create_post_link");
 	if(lnktothink){
 		lnktothink.addEventListener("click",()=>{
-			post("/create_post",{"server":document.getElementById("server").innerHTML,"parent":-1})
+			console.log("e");
+			post("/create_post",{"server":document.getElementById("server").innerHTML,"parent":-1});
 		});
 	}
 	var mkpost=(question)=>{
@@ -233,7 +234,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		ok.addEventListener("click",()=>{
 			post("/",{"server":s['id']});
 		});
-		documentGetElementById("server_list").appendChild(ok);
+		documentGetElementById("server_list_main").appendChild(ok);
 	};
 	
 	var slsl=documnet.getElementById("server_list");

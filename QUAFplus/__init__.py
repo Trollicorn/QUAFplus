@@ -40,7 +40,7 @@ def main():
     else:
         server=request.args["server"]if"server"in request.args else -1
         post=request.args["post"]if"post"in request.args else -1
-    return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
+    return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(uid,server),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
 
 @app.route('/login',methods=["POST","GET"])
 def login():
@@ -195,45 +195,47 @@ def profile():
 
 @app.route('/make_server',methods=["GET","POST"])
 def server_make():
+    if request.method=="GET":
+        return render_template("make_server.html")
     formkeys = request.form.keys()
     if not ('name' in formkeys and
             'description' in formkeys and
             'password' in formkeys
             ):
         flash("Fill out all fields")
-        return render_template('base.html') #OR WHEREVER ITS CREATED
+        return render_template('make_server.html') #OR WHEREVER ITS CREATED
     name = request.form['name'].strip()
     description = request.form['description'].strip()
     password = request.form['password'].strip()
     database.make_server(session['userid'],name,description,password)
-    return render_template('base.html') #OR WHEREEVER
+    return redirect("/")
 
 @app.route('/join_server',methods=['GET','POST'])
 def server_join():
+    if request.method=="GET":
+        return render_template('join_server.html')
     formkeys = request.form.keys()
     if not ('serverid' in formkeys and
             'password' in formkeys):
-        flash ('need server id')
-        return render_template('base.html') #OR WHEREVER
+        flash ('Fill out fields')
+        return render_template('join_server.html') #OR WHEREVER
     password = request.form['password']
     serverid = request.form['serverid'].strip()
     spass = database.get_spass(serverid)
     if password != spass:
-        flash('incorrect password')
-        return render_template('base.html') #OR WHEREVER
+        flash('Incorrect password')
+        return render_template('join_server.html') #OR WHEREVER
     join_server(session['userid'],serverid)
-    return render_template('base.html')
+    return redirect("/")
 
 @app.route('/leave_server',methods=['GET','POST'])
 def server_leave():
     formkeys = request.form.keys()
     if not ('serverid' in formkeys):
-        flash ('need server id')
-        return render_template('base.html') #OR WHEREVER
+        return redirect("/") #OR WHEREVER
     serverid = request.form['serverid'].strip()
     leave_server(session['userid'],serverid)
-    return render_template('base.html') #OR WHEREVER
-
+    return redirect("/")
 
 if __name__ == "__main__":
     #database.db_reset()

@@ -14,7 +14,7 @@ def db_reset():
     c.execute("DROP TABLE IF EXISTS users;")
     c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, email TEXT, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER);")
     c.execute("DROP TABLE IF EXISTS servers;")
-    c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, members TEXT, admins TEXT, password TEXT);")
+    c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, users TEXT, admins TEXT, password TEXT);")
     c.execute("DROP TABLE IF EXISTS nonverified;")
     c.execute("CREATE TABLE nonverified(email TEXT, code TEXT);")
     db.commit()
@@ -200,7 +200,7 @@ def remove_admin(uid, serverid):
 def make_server(uid, name, description, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("INSERT INTO servers(name,description,members,admins,password) VALUES(?,?,?,?,?);",
+    c.execute("INSERT INTO servers(name,description,users,admins,password) VALUES(?,?,?,?,?);",
               (name, dscription, str(uid), str(uid), password))
     db.commit()
     db.close()
