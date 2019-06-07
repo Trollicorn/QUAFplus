@@ -124,7 +124,7 @@ def user_servers_dict(uid):
 def all_users(serverid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    b = c.execute("SELECT members FROM servers WHERE id = ?", (serverid,)).fetchone(0)
+    b = c.execute("SELECT users FROM servers WHERE id = ?", (serverid,)).fetchone(0)
     list = []
     for i in b.split(","):
         list.append({"name": i})
