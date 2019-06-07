@@ -8,7 +8,7 @@ try:
     from QUAFplus import pp as pp
 except ModuleNotFoundError:
     import pp
-from util import usablecode as database
+from .util import usablecode as database
 
 #from util import database
 
@@ -83,7 +83,7 @@ def register():
     print(request.form)
     if not ('email' in formkeys):
         flash("Fill out all fields")
-        return render_template('verification.html')
+        return render_template('signup.html')
     email = request.form['email'].replace(' ','')
     at = email.find('@')
     if at != -1:
@@ -97,7 +97,7 @@ def register():
     database.add_nonverified(email,code)
     mail.send(msg)
     flash('A verification code has been sent to your email')
-    return redirect("/verify")
+    return render_template("verification.html")
 #ImmutableMultiDict([('firstN', 'Theodore'), ('lastN', 'Peters'), ('email', 'tpeters@stuy.edu'), ('pass', '12345'), ('passConf', '12345'), ('code', 'VURK93')])
 @app.route('/verify',methods=["POST","GET"])
 def verify():
