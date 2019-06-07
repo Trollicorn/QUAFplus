@@ -36,6 +36,7 @@ to install: `pip install flask-mail`
 - create a copy of the file named `pp.py.example` and call it `pp.py`
 - in the `pp.py` file, change the value of `MAIL_USERNAME` to a valid gmail email address that you have access to (this email address will be used to send emails)
 - in the `pp.py` file, change the value of `MAIL_PASSWORD` to the password of the gmail address used for `MAIL_USERNAME` (don't worry, the `pp.py` file is not tracked by github, and the only way for someone to see your account credentials would be to open the file itself locally)
+- open the `util/usablecode.py` file and comment out the `DB_FILE` assignment under *if local* (add a `#` right before the `DB_FILE` and uncomment the `DB_FILE` assignment under *if on virtual machine* (remove the # right before the `DB_FILE`) 
 - do `cd ..` to cd back to the outer QUAFplus directory
 - do `pip3 install -r requirements.txt` to install required libraries
 - in the `QUAFplus.conf` file, change the *ServerName* to where users will go to use the app

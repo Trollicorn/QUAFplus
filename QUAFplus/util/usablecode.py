@@ -3,8 +3,11 @@ import datetime
 
 import hashlib
 
+#if local
 DB_FILE = "quaf.db"
 
+#if on virtual machine
+#DB_FILE = '/var/www/QUAFplus/QUAFplus/quaf.db'
 
 def db_reset():
     db = sqlite3.connect(DB_FILE)
