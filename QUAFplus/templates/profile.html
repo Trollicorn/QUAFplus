@@ -10,20 +10,48 @@
 
 <body style="background-color:#99ccff">
     <div style="width:60%;text-align:center;margin:auto;margin-top:100px;background-color:beige;">
-        <h3> 
-            <div>
-            First Name: {{ first }} <br>
-            Last Name: {{ last }} <br>
+
+        <button class="text-secondary" href="/" style="margin-top: 20px;margin-bottom: 20px"> Return to Home</button> 
+
+
+
+        <div class="container">
+            <div class="row profile_box">
+                <div class="col-md-2 col-xs-2"></div>
+                <div class="col-md-8 col-xs-8" style ="width:40%;background-color:peachpuff;text-align:center;">
+                    <h1 class="text-primary">Hello </h1> <h2 class="text-primary">{{ First }} <br> {{ Last }} </h2>
+
+                </div>
+
+                <div class="col-md-5 col-xs-5 text-info" style="text-align:center;margin-top:15px;margin-bottom:15px" >
+                    <h3>
+                        Number of Posts: <br /> {{ numPost }}
+                    </h3>
+                </div>
+                <div class="col-md-2 col-xs-2"></div>
+                <div class="col-md-5 col-xs-5 text-info" style="text-align:center;margin-top:15px;margin-bottom:15px">
+                    <h3>
+                        Number of Deleted Posts: <br /> {{ numDeleted }} 
+                    </h3>
+                </div>
+                <div class="col-md-3 col-xs-3"></div>
+                <div class="col-md-6 col-xs-6 text-info" style="text-align:center;margin-bottom:15px">
+                    <h3>
+                        Number of Best Posts: <br /> {{ numBest }}
+                    </h3>
+                </div>
+                
+                <div class="col-md-12 col-xs-12 text-success" style="text-align:center;margin-top:10px;margin-bottom:20px">
+
+                        <h3 style="margin-bottom: 18px">Email Address</h3>
+                        <h4>{{ email }}</h4>
+
+                </div>
+
+
             </div>
-            <div>
-            Email Address: {{ email }} <br>
-            </div>
-            <div>
-            Number of Posts: {{ numPost }} <br>
-            Number of Deleted Posts: {{ numDeleted }} <br>
-            Number of Best Posts: {{ numBest }} <br>
-            </div>
-        </h3>
+        </div>
+
     </div>
 </body>
 
