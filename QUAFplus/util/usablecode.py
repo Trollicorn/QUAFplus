@@ -45,7 +45,7 @@ def quick_user_inf(uid):
     c = db.cursor()
     u=c.execute("SELECT * FROM users WHERE id = ?;",(uid,)).fetchone()
     db.close()
-    return{"first":u[1],"last":u[2],"numpost":u[5],"numbest":u[7],"uid":uid}
+    return{"first":u[1],"last":u[2],"uid":uid}
 def home(serverid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()

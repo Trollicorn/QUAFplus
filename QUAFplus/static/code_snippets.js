@@ -102,6 +102,46 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		post("/make_post",{"title":title,"body":body,"snips":snips,"parent":parent,"server":server})
 	}
-	document.getElementById("make_post").addEventListener("click",mkpost);
+	mkpstbtn=document.getElementById("make_post")
+	if(mkpstbtn){
+		mkpstbtn.addEventListener("click",mkpost);
+	}
     
+	var tree={'id':3,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[{'id':4,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[]},{'id':5,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[]}]}
+
+	var postify=(top,daddy)=>{
+		console.log(top)
+		let ok=document.createElement('div');
+		ok.setAttribute("class","post");
+		ok.innerHTML=document.getElementById("post_template").innerHTML;
+		ok.getElementsByClassName("post_title").item(0).innerHTML=top['title']
+		ok.getElementsByClassName("post_author").item(0).innerHTML=top['author']['first']+' '+top['author']['last']
+		ok.getElementsByClassName("post_date").item(0).innerHTML=top['date']
+		ok.getElementsByClassName("post_body").item(0).innerHTML=top['body']
+
+		btn=ok.getElementsByClassName("post_collapse_head").item(0);
+		btni="post_heading_"+top['id'];
+		chl=ok.getElementsByClassName("post_collapse_body").item(0);
+		chli="post_collapse_"+top['id'];
+		acc=ok.getElementsByClassName("post_collapse_accordion").item(0);
+		acci="post_accordion_"+top['id'];
+
+		acc.setAttribute("id",acci);
+		btn.setAttribute("id",btni);
+		btn.setAttribute("data-target","#"+chli);
+		btn.setAttribute("data-parent","#"+acci);
+		btn.setAttribute("aria-controls",chli);
+		chl.setAttribute("id",chli);
+		chl.setAttribute("aria-labeledby",btni);
+		
+		snippify_string(top['snips'],ok.getElementsByClassName("post_code_snippets").item(0))
+		for(var mid in top['children']){
+			
+			postify(top['children'][mid], ok.getElementsByClassName("post_children").item(0));
+		}
+		console.log(ok)
+		daddy.appendChild(ok);
+	};
+
+	postify(tree,document.getElementById("post_base"));
 });
