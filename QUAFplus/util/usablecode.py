@@ -201,7 +201,7 @@ def make_server(uid, name, description, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("INSERT INTO servers(name,description,users,admins,password) VALUES(?,?,?,?,?);",
-              (name, dscription, str(uid), str(uid), password))
+              (name, description, str(uid), str(uid), password))
     db.commit()
     db.close()
 

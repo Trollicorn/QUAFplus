@@ -6,9 +6,10 @@ import hashlib
 import string, random, os
 try:
     from QUAFplus import pp as pp
+    from QUAF.util import usablecode as database
 except ModuleNotFoundError:
     import pp
-from .util import usablecode as database
+    from util import usablecode as database
 
 #from util import database
 
