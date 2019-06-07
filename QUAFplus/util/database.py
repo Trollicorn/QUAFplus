@@ -26,17 +26,23 @@ def createDatabase():
                 )"""
                 )
 
+    c.execute('''CREATE TABLE IF NOT EXISTS nonverified(
+                email TEXT,
+                pass TEXT,
+                code TEXT
+    )'''
+    )
+
     c.execute("""CREATE TABLE IF NOT EXISTS users(
                 userid INTEGER PRIMARY KEY AUTOINCREMENT,
                 firstN TEXT,
                 lastN TEXT,
-                user INTEGER,
+                email TEXT,
                 pass TEXT,
                 numPost INTEGER,
                 numDeleted INTEGER,
                 numBest INTEGER,
-                identity TEXT,
-                description TEXT
+                activation TEXT
                 )"""
                 )
 
@@ -78,43 +84,41 @@ def checkInfo(user, pswd):
 # print(checkInfo(217412923, "bobobobo"))
 # print(checkInfo(2174123, "bobo"))
 
-def createAccount(user,pswd,passConf,firstN,lastN, identity, description):
+def createAccount(email,pw,firstN,lastN):
 
     '''
-    This method checks inputs when creating an acc
-    to make sure user didn't mess up anywhere in the process. If everything
-    is good, then the account will be created.
-
-    The student's osis will be used as the user. If their identity is a teacher,
-    the osis will not be necessary.
+    This method adds a user to the database
     '''
 
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
 
-    #checks for correctness of osis input only if student
-    if identity == "student":
-        #checks if user is an osis
-        if((not isinstance(user, int)) or (len(str(user))!= 9) ):
-            db.close()
-            return "Not an integer or not the right length for osis"
+    #checks if the email already exists
+    #implement
 
-    #checks if the username already exists
-    for i in c.execute("SELECT osis FROM users WHERE osis = ?",(user,)):
-        db.close()
-        return "Username already exists - Stop trying to steal someone's identity"
+    userdb="INSERT INTO users(firstN, lastN, email, pass, numPost, numDeleted, numPost) VALUES(?, ?, ?, ?, ?, ?, ?)"
+    c.execute(userdb,(firstN,lastN, email, pw, 0, 0 , 0)
+    db.commit()
+    db.close()
+    return "Account creation successful"
 
-    else:
-        #if password confirmation fails
-        if pswd != passConf:
-            db.close()
-            return "Passwords do not match - Try again"
-        #if password confirmation succeeds add the user to the database
-        userdb="INSERT INTO users(firstN, lastN, osis, pass, numPost, numDeleted, numPost, identity, description) VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        c.execute(userdb,(firstN,lastN, user, pswd, 0, 0 , 0, identity, description))
-        db.commit()
+def addNonverified(email,pw,code):
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+    c.execute("INSERT INTO nonverified(email, pass, code) VALUES(?, ?, ?)")
+    db.commit()
+    db.close()
+    return "added"
+
+def activateAccount(email,activation):
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+    for i in c.execute("SELECT email FROM users WHERE email = ?",(email,)):
         db.close()
-        return "Account creation successful"
+        return "Already verified"
+    a = c.execute("SELECT email,pw FROM nonverified WHERE email = ? AND code = ?",(email,activation))
+    ## do later
+
 
 #testing functions
 # print(createAccount(217412923, "bobo", "bobo", "bo", "lu"))
