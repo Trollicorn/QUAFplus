@@ -237,6 +237,18 @@ def server_leave():
     leave_server(session['userid'],serverid)
     return render_template('base.html') #OR WHEREVER
 
+@app.route('/server_info', methods=['GET', 'POST'])
+def server_info():
+    formkeys = request.form.keys()
+    if not ('serverid' in formkeys):
+        flash ('need server id')
+        return render_template('base.html') #OR WHEREVER
+    serverid = request.form['serverid'].strip()
+    serverName = database.get_serverName(serverid)
+
+    users = database.all_users(serverid)
+
+    return render_template('server_info.html', allUsers=users, server=severName)
 
 if __name__ == "__main__":
     #database.db_reset()
