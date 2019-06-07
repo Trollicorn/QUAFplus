@@ -36,12 +36,12 @@ def main():
         return redirect("/login")
     uid=int(session["userid"])
     if request.method=="POST":
-        server=request.form["server"]if"server"in request.form else -1
-        post=request.form["post"]if"post"in request.form else -1
+        server=int(request.form["server"]if"server"in request.form else -1)
+        post=int(request.form["post"]if"post"in request.form else -1)
     else:
-        server=request.args["server"]if"server"in request.args else -1
-        post=request.args["post"]if"post"in request.args else -1
-    return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(uid,server),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
+        server=int(request.args["server"]if"server"in request.args else -1)
+        post=int(request.args["post"]if"post"in request.args else -1)
+    return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(post))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(uid,server),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
 
 @app.route('/login',methods=["POST","GET"])
 def login():
@@ -142,11 +142,11 @@ def ok():
         return redirect('/login')
     uid = session['userid']
     if request.method=="POST":
-        parent=request.form["parent"]if"parent"in request.form else -1
-        server=request.form["server"]if"server"in request.form else -1
+        parent=int(request.form["parent"])if"parent"in request.form else -1
+        server=int(request.form["server"])if"server"in request.form else -1
     else:
-        parent=request.args["parent"]if"parent"in request.args else -1
-        server=request.args["server"]if"server"in request.args else -1
+        parent=int(request.args["parent"])if"parent"in request.args else -1
+        server=int(request.args["server"])if"server"in request.args else -1
     if(server==-1):
         return redirect("/")
     return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(uid,server),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
@@ -158,13 +158,14 @@ def okok():
         uid=int(session["userid"])
         serverid=int(request.form["server"])
         if database.check_user(uid,serverid):
-            database.mk_post(**request.form["title"],author=session["userid"])
+            print(request.form)
+            database.mk_post(author=session["userid"],**request.form)
     return redirect("/")
 @app.route("/delete_post",methods=["POST"])
 def okokok():
     if"userid"in session:
         uid=int(session["userid"])
-        postid=int(request.form["post"])
+        postid=int(request.form["id"])
         postinfo=database.tree(postid)
         serverid=postinfo["server"]
         if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
@@ -174,7 +175,7 @@ def okokok():
 def okokokok():
     if"userid"in session:
         uid=int(session["userid"])
-        postid=int(request.form["post"])
+        postid=int(request.form["id"])
         postinfo=database.tree(postid)
         serverid=postinfo["server"]
         if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:

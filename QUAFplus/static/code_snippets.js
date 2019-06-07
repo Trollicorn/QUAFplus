@@ -130,6 +130,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 		ok.getElementsByClassName("post_date").item(0).innerHTML=top['date'];
 		ok.getElementsByClassName("post_icon").item(0).innerHTML=top['question']?(top['answered']?'<i class="fas fa-check" style="color:#00A153;"></i>':'<i class="fas fa-question" style="color:#9E0000;"></i>'):'<i class="fas fa-exclamation" style="color:#671B96;"></i>'
 
+		ok.getElementsByClassName("post_redirect").item(0).addEventListener("click",()=>{
+			post("/",{"server":top['server'],"post":top['id']})
+		});
+		
 		let ans=ok.getElementsByClassName("post_answer").item(0);
 		if((document.getElementById("is_admin").innerHTML=="yes"||document.getElementById("user_id").innerHTML==top["author"]["uid"])&&document.getElementById("view_mode").innerHTML=="replies"&&top['question']&&!top['answered']){
 			ans.addEventListener("click",(e)=>{
@@ -214,7 +218,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 		daddy.appendChild(ok);
 	};
 	if (document.getElementById("post_tree_text")){
-		var tree = eval(document.getElementById("post_tree_text").innerHTML.replace(/&#39;/gm,"'"));
+		var txt="["+document.getElementById("post_tree_text").innerHTML.replace(/&#39;/gm,"'").replace(/True/gm,"true").replace(/False/gm,"false")+"]";
+		console.log(txt);
+		var tree = eval(txt)[0];
 		console.log(tree);
 		if(Array.isArray(tree)){
 			for(var i=0;i<tree.length;i++){

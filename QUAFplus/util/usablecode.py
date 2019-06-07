@@ -10,7 +10,7 @@ def db_reset():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("DROP TABLE IF EXISTS posts;")
-    c.execute("CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, snips TEXT, author INT, parent INT, tags TEXT, date TEXT, server INTEGER, answered INTEGER, best INTEGER, questgion INTEGER);")
+    c.execute("CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, snips TEXT, author INT, parent INT, tags TEXT, date TEXT, server INTEGER, answered INTEGER, best INTEGER, question INTEGER);")
     c.execute("DROP TABLE IF EXISTS users;")
     c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, email TEXT, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER);")
     c.execute("DROP TABLE IF EXISTS servers;")
@@ -47,12 +47,12 @@ def get_parent(childid):
     return a[0]
 
 
-def mk_post(title="", body="", snips="", author=-1, parent=-1, tags="", server=-1, question=False):
+def mk_post(title="", body="", snips="", author=-1, parent=-1, tags="", server=-1, question="false"):
     if server != -1:
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best,question) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                  (title, body, snips, int(author), int(parent), tags, str(datetime.datetime.now()), int(server), 0, 0, 1 if question else 0))
+        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best,question) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                  (title, body, snips, int(author), int(parent), tags, str(datetime.datetime.now()), int(server), 0, 0, 1 if question=="true" else 0))
         db.commit()
         db.close()
 
@@ -92,7 +92,7 @@ def user_profile(uid):
 def home(serverid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    e = c.execute("SELECT * FROM posts WHERE server=?;",
+    e = c.execute("SELECT * FROM posts WHERE server=? AND parent=-1;",
                   (serverid,)).fetchall()
     db.close()
     return[{'id': o[0], 'title':o[1], 'body':o[2], 'snips':o[3], 'author':quick_user_inf(o[4]), 'parent':o[5], 'tags':o[6].split(","), 'date':o[7], 'server':o[8], 'answered':True if o[9] == 1 else False, 'best':o[10], 'question':True if o[11] == 1 else False}for o in e]
@@ -101,7 +101,7 @@ def home(serverid):
 def parents(lowid, child=[]):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    o = c.execute("SELECT * FROM posts WHERE id=?;", (postid,)).fetchone()
+    o = c.execute("SELECT * FROM posts WHERE id=?;", (lowid,)).fetchone()
     txt = {'id': o[0], 'title': o[1], 'body': o[2], 'snips': o[3], 'author': quick_user_inf(o[4]), 'parent': o[5], 'tags': o[6].split(
         ","), 'date': o[7], 'server': o[8], 'answered': True if o[9] == 1 else False, 'best': o[10], 'question': True if o[11] == 1 else False, 'children': child}
     db.close()
