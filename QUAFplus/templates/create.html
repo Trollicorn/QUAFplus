@@ -7,9 +7,18 @@
 		<input type="title" class="form-control" id="new_post_title" placeholder="Post Title" style="width:100%;">
       </div>
     </div>
-    <div class="col-2">
-      <div class="btn btn-success" style="width:100%;" id="make_post">Create Post</div>
+	{% if parent==-1 %}
+    <div class="col-1">
+      <div class="btn btn-success btn-announce" style="width:100%;" id="make_post">New Announcement</div>
     </div>
+	<div class="col-1">
+      <div class="btn btn-success btn-question" style="width:100%;" id="make_post_question">New Question</div>
+    </div>
+	{% else %}
+    <div class="col-2">
+      <div class="btn btn-success" style="width:100%;" id="make_post">Post Reply</div>
+    </div>
+	{% endif %}
   </div>
   <div class="form-group">
     <textarea class="form-control" id="new_post_body" rows="3"></textarea>

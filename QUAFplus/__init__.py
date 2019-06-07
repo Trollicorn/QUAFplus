@@ -38,24 +38,6 @@ def main():
         post=request.args["post"]if"post"in request.args else -1
     return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
 
-@app.route('/authenticate', methods = ["POST", "GET"])
-def authenticate():
-    """
-    status = ''
-
-    if request.method == "GET" or "user" not in request.form.keys():
-        return redirect('/')
-
-    if "passConf" in request.form.keys():
-        print("\n ACC CREATION \n")
-        status = database.createAccount(request.form["user"]. request.form["pswd"], request.form["passConf"], request.form["firstN"], request.form["lastN"])
-
-    else:
-        print("\n INFO CONFIRMATION \n")
-        status = database.checkInfo(request.form["user"], request.form["pswd"])
-    """
-    return render_template("signup.html")
-
 @app.route('/register',methods=['POST','GET'])
 def register():
     '''
@@ -91,7 +73,7 @@ def register():
 
     mail.send(msg)
 
-    return render_template('signup.html')
+    return render_template('verify.html')
 
 
 @app.route('/create',methods=["POST","GET"])
@@ -125,6 +107,17 @@ def okokok():
         if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
             database.rm_post(postid)
     return redirect("/")
+@app.route("/mark_answered",methods=["POST"])
+def okokokok():
+    if"userid"in session:
+        uid=int(session["userid"])
+        postid=int(request.form["post"])
+        postinfo=database.tree(postid)
+        serverid=postinfo["server"]
+        if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
+            database.ans_post(postid)
+    return redirect("/")
+
 
 if __name__ == "__main__":
     app.debug = True

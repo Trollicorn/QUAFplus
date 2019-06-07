@@ -111,12 +111,13 @@
 		<br>
       </div>
     </script>
+
 	<script id="post_template">
 	  <div class="card post_collapse_accordion" style="width:100%;margin:3px;">
 		<div class="card-header">
 		  <div class="row no-gutters post_collapse_head" data-toggle="collapse" data-parent="#accordion" aria-expanded="true">
 			<div class="col-10">
-			  <h3 class="post_title" style="display:inline;"><strong></strong></h3>
+			  <h3 style="display:inline;"><strong class="post_title"></strong></h3>
 			  <span class="post_author_css"> by <span class="post_author"></span> on <span class="post_date"></span></span>
 			</div>
 			<div class="col-2 post_controls" style="text-align:right">
@@ -136,5 +137,29 @@
 	  </div>
 	</script>
 
+	<script id="post_top_template">
+	  <div class="card" style="width:100%;margin:3px;">
+		<div class="card-header">
+		  <div class="row no-gutters">
+			<div class="col-10">
+			  <h3 style="display:inline;"><span class="post_icon"></span> <strong class="post_title"></strong></h3>
+			  <span class="post_author_css"> by <span class="post_author"></span> on <span class="post_date"></span></span>
+			</div>
+			<div class="col-2 post_controls" style="text-align:right">
+			  <a style="padding:3px;" class="post_answer"><i class="fas fa-check"></i></a>
+			  <a style="padding:3px;" class="post_delete"><i class="fas fa-trash-alt"></i></a>
+			  <a style="padding:3px;" class="post_reply"><i class="fas fa-reply"></i></a>
+			</div>
+		  </div>
+		  <div class="post_body"></div>
+		  <br>
+		  <div class="post_code_snippets" style="width:100%"></div>
+		  <br>
+		  <div class="post_children">
+		  </div>
+		</div>
+	  </div>
+	</script>
+	
   </body>
 </html>

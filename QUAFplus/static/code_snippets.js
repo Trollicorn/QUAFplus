@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		document.body.appendChild(form);
 		form.submit();
 	}
-	var mkpost=()=>{
+	var mkpost=(question)=>{
 		console.log("submitting");
 		var title=document.getElementById("new_post_title").value;
 		var body=document.getElementById("new_post_body").value;
@@ -100,13 +100,64 @@ document.addEventListener("DOMContentLoaded",()=>{
 		for(var i=0;i<ok.length;i++){
 			snips+=stringify_snip(ok.item(0));
 		}
-		post("/make_post",{"title":title,"body":body,"snips":snips,"parent":parent,"server":server});
+		post("/make_post",{"title":title,"body":body,"snips":snips,"parent":parent,"server":server,"question":question});
 	}
-	mkpstbtn=document.getElementById("make_post");
+	var mkpstbtn=document.getElementById("make_post");
 	if(mkpstbtn){
-		mkpstbtn.addEventListener("click",mkpost);
+		mkpstbtn.addEventListener("click",()=>{mkpost(false);});
 	}
-    
+
+	var mkpstbtn2=document.getElementById("make_post_question");
+	if(mkpstbtn2){
+		mkpstbtn2.addEventListener("click",()=>{mkpost(true);});
+	}
+
+	
+	var top_postify(top,daddy,inner)=>{
+		console.log(top)
+		let ok=document.createElement('div');
+		ok.setAttribute("class","post");
+		ok.innerHTML=document.getElementById("post_top_template").innerHTML;
+		ok.getElementsByClassName("post_title").item(0).innerHTML=top['title'];
+		ok.getElementsByClassName("post_author").item(0).innerHTML=top['author']['first']+' '+top['author']['last'];
+		ok.getElementsByClassName("post_date").item(0).innerHTML=top['date'];
+		ok.getElementsByClassName("post_icon").item(0).innerHTML=top['question']?(top['answered']?'<i class="fas fa-check" style="color:#00A153;"></i>':'<i class="fas fa-question" style="color:#9E0000;"></i>'):'<i class="fas fa-exclamation" style="color:#671B96;"></i>'
+
+		let ans=ok.getElementsByClassName("post_answer").item(0);
+		if((document.getElementById("is_admin").innerHTML=="yes"||document.getElementById("user_id").innerHTML==top["author"]["uid"])&&document.getElementById("view_mode").innerHTML=="replies"&&top['question']&&!top['answered']){
+			ans.addEventListener("click",(e)=>{
+				e.preventDefault();
+				post("/mark_answered",{"id":top['id']});
+			});
+		}else{
+			ans.parentNode.removeChild(ans);
+		}
+		let del=ok.getElementsByClassName("post_delete").item(0);
+		if((document.getElementById("is_admin").innerHTML=="yes"||document.getElementById("user_id").innerHTML==top["author"]["uid"])&&document.getElementById("view_mode").innerHTML!="create"){
+			del.addEventListener("click",(e)=>{
+				e.preventDefault();
+				post("/delete_post",{"server":top['server'],"id":top['id']});
+			});
+		}else{
+			del.parentNode.removeChild(del);
+		}
+		let rep=ok.getElementsByClassName("post_reply").item(0);
+		if(document.getElementById("view_mode").innerHTML!="replies"){
+			rep.parentNode.removeChild(rep);
+		}else{
+			rep.addEventListener("click",()=>{
+				post("/create",{"server":top['server'],'parent':top["id"]})
+			});
+		}
+		if(inner){
+			ok.getElementsByClassName("post_body").item(0).innerHTML=top['body'];
+			snippify_string(top['snips'],ok.getElementsByClassName("post_code_snippets").item(0))
+			for(var mid in top['children']){
+				postify(top['children'][mid], ok.getElementsByClassName("post_children").item(0));
+			}
+		}
+		daddy.appendChild(ok);
+	};
 	var postify=(top,daddy)=>{
 		console.log(top)
 		let ok=document.createElement('div');
@@ -160,10 +211,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 		console.log(tree);
 		if(Array.isArray(tree)){
 			for(var i=0;i<tree.length;i++){
-				postify(tree.item(i),document.getElementById("post_base"));
+				top_postify(tree.item(i),document.getElementById("post_base"),false);
 			}
 		}else{
-			postify(tree,document.getElementById("post_base"));
+			top_postify(tree,document.getElementById("post_base"),true);
 		}
 	}
 

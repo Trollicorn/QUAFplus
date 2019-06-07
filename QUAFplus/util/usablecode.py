@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 
-DB_FILE="../data/quaf.db"
+DB_FILE="quaf.db"
 
 
 def db_reset():
@@ -35,17 +35,25 @@ def get_parent(childid):
     a=c.execute("SELECT parentid FROM posts WHERE id=?;",(childid,)).fetchone()
     db.close()
     return a[0]
-def mk_post(title="",body="",snips="",author=-1,parent=-1,tags="",server=-1):
+def mk_post(title="",body="",snips="",author=-1,parent=-1,tags="",server=-1,question=False):
     if server!=-1:
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,int(author),int(parent),tags,str(datetime.datetime.now()),int(server)))
+        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best,question) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,int(author),int(parent),tags,str(datetime.datetime.now()),int(server),0,0,1 if question else 0))
         db.commit()
         db.close()
 def rm_post(postid):
     db = sqlite3.connect(DB_FILE)
     c=db.cursor()
-    c.execute("DELETE FROM posts WHERE id=?",(postid,))
+    c.execute("DELETE FROM posts WHERE id=?;",(postid,))
+    db.commit()
+    db.close()
+def ans_post(postid):
+    db = sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    c.execute("UPDATE posts SET answered=1 WHERE id=?;",(postid,))
+    db.commit()
+    db.close()
 def quick_user_inf(uid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
