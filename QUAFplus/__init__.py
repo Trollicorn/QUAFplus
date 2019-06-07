@@ -55,7 +55,7 @@ def login():
             return render_template('login.html')
         pw = request.form['pass'].strip()
         email = request.form['email'].replace(' ','')
-        if not user_exists(email):
+        if not database.user_exists(email):
             flash("User does not exist with that email")
             return render_template("login.html")
         if not database.check_password(email,pw):
@@ -82,7 +82,7 @@ def register():
     formkeys = request.form.keys()
     if not ('email' in formkeys):
         flash("Fill out all fields")
-        return render_template('signup.html')
+        return render_template('verification.html')
     email = request.form['email'].replace(' ','')
     at = email.find('@')
     if at != -1:
@@ -92,7 +92,7 @@ def register():
         return render_template('signup.html')
     msg = Message('QUAF+ Verification',recipients = [email])
     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
-    msg.body = 'Your QUAF+ verification code is' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
+    msg.body = 'Your QUAF+ verification code is ' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
     database.add_nonverified(email,code)
     mail.send(msg)
     flash('A verification code has been sent to your email')
