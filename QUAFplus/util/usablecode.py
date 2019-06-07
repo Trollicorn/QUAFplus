@@ -154,6 +154,11 @@ def join_server(uid, serverid):
         db.commit()
         db.close()
 
+def get_spass(serverid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    a = c.execute("SELECT password FROM servers where id=?;",(serverid,)).fetchone()[0]
+    return a
 
 def leave_server(uid, serverid):
     if check_user(uid, serverid):
@@ -260,4 +265,3 @@ def add_verified(email, passhash, firstN, lastN):
 # stat = user_profile(get_uid("blu4@stuy.edu"))
 # print(stat['first'])
 # print(stat['email'])
-

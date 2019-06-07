@@ -80,7 +80,7 @@ def register():
     registers the user
     '''
     formkeys = request.form.keys()
-    if not ('email' in formkeys):      
+    if not ('email' in formkeys):
         flash("Fill out all fields")
         return render_template('signup.html')
     email = request.form['email'].replace(' ','')
@@ -185,11 +185,51 @@ def profile():
         nP = stats['numPost']
         nD = stats['numDeleted']
         nB = stats['numBest']
-
         return render_template("profile.html", first = ft, last = lt, email = em, numPost = nP, numDeleted = nD, numBest = nB )
-
     else:
         return redirect("/")
+
+@app.route('/make_server',methods=["GET","POST"])
+def server_make():
+    formkeys = request.form.keys()
+    if not ('name' in formkeys and
+            'description' in formkeys and
+            'password' in formkeys
+            ):
+        flash("Fill out all fields")
+        return render_template('base.html') #OR WHEREVER ITS CREATED
+    name = request.form['name'].strip()
+    description = request.form['description'].strip()
+    password = request.form['password'].strip()
+    database.make_server(session['userid'],name,description,password)
+    return render_template('base.html') #OR WHEREEVER
+
+@app.route('/join_server',methods=['GET','POST'])
+def server_join():
+    formkeys = request.form.keys()
+    if not ('serverid' in formkeys and
+            'password' in formkeys):
+        flash ('need server id')
+        return render_template('base.html') #OR WHEREVER
+    password = request.form['password']
+    serverid = request.form['serverid'].strip()
+    spass = database.get_spass(serverid)
+    if password != spass:
+        flash('incorrect password')
+        return render_template('base.html') #OR WHEREVER
+    join_server(session['userid'],serverid)
+    return render_template('base.html')
+
+@app.route('/leave_server',methods=['GET','POST'])
+def server_leave():
+    formkeys = request.form.keys()
+    if not ('serverid' in formkeys):
+        flash ('need server id')
+        return render_template('base.html') #OR WHEREVER
+    serverid = request.form['serverid'].strip()
+    leave_server(session['userid'],serverid)
+    return render_template('base.html') #OR WHEREVER
+
 
 if __name__ == "__main__":
     app.debug = True
