@@ -40,6 +40,8 @@ def main():
 
 @app.route('/register',methods=['POST','GET'])
 def register():
+    if request.method=="GET":
+        return render_template("signup.html")
     '''
     should be passed email (user), password, confirmation password
     '''
@@ -96,8 +98,21 @@ def eggnogg():
         if"username"not in request.form or"password"not in request.form:
             flash("Bad request")
             return render_template("login.html")
-        
+        if not user_exists(request.form['email']):
+            flash("User does not exist with that email")
+            return render_template("login.html")
+        if not check_password(request.form['email'],request.form['password']):
+            flash("Bad password")
+            return render_template("login.html")
+        session["userid"]=get_uid(request.form['email'])
+        return redirect("/")
 
+@app.route("/logout")
+def logout():
+    if'userid'in session:
+        session.pop("userid")
+    return redirect("/")
+    
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
 def okok():

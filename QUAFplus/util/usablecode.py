@@ -145,10 +145,18 @@ def make_server(uid, name, description, password):
 def user_exists(email):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    return c.execute("SELECT * FROM users WHERE email=?;",(email,)).fetchone()!=None
+    tmp=c.execute("SELECT * FROM users WHERE email=?;",(email,)).fetchone()!=None
     db.close()
+    return tmp
 def check_password(email,password):
     db=sqlite3.connect(DB_FILE)
     c=db.cursor()
-    return c.execute("SELECT * FROM users WHERE email=? AND pass=?;",(email,sha256_crypt.hash(email+password))).fetchone()!=None
+    tmp=c.execute("SELECT * FROM users WHERE email=? AND pass=?;",(email,sha256_crypt.hash(email+password))).fetchone()!=None
     db.close()
+    return tmp
+def get_uid(email):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    tmp=c.execute("SELECT * FROM users WHERE email=?;",(email,)).fetchone()[0]
+    db.close()
+    return tmp
