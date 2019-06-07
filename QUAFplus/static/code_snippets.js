@@ -100,24 +100,22 @@ document.addEventListener("DOMContentLoaded",()=>{
 		for(var i=0;i<ok.length;i++){
 			snips+=stringify_snip(ok.item(0));
 		}
-		post("/make_post",{"title":title,"body":body,"snips":snips,"parent":parent,"server":server})
+		post("/make_post",{"title":title,"body":body,"snips":snips,"parent":parent,"server":server});
 	}
-	mkpstbtn=document.getElementById("make_post")
+	mkpstbtn=document.getElementById("make_post");
 	if(mkpstbtn){
 		mkpstbtn.addEventListener("click",mkpost);
 	}
     
-	var tree={'id':3,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[{'id':4,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[]},{'id':5,'title':"test",'body':"body","snips":'{%{{{{py\npy\nprint("hello")}}}}%}','author':{'first':"THEODORE",'last':"PETERS",'uid':1},'parent':-1,'tags':[],'date':"daymonthyear",'server':8,'answered':false,'best':0,'question':true,'children':[]}]}
-
 	var postify=(top,daddy)=>{
 		console.log(top)
 		let ok=document.createElement('div');
 		ok.setAttribute("class","post");
 		ok.innerHTML=document.getElementById("post_template").innerHTML;
-		ok.getElementsByClassName("post_title").item(0).innerHTML=top['title']
-		ok.getElementsByClassName("post_author").item(0).innerHTML=top['author']['first']+' '+top['author']['last']
-		ok.getElementsByClassName("post_date").item(0).innerHTML=top['date']
-		ok.getElementsByClassName("post_body").item(0).innerHTML=top['body']
+		ok.getElementsByClassName("post_title").item(0).innerHTML=top['title'];
+		ok.getElementsByClassName("post_author").item(0).innerHTML=top['author']['first']+' '+top['author']['last'];
+		ok.getElementsByClassName("post_date").item(0).innerHTML=top['date'];
+		ok.getElementsByClassName("post_body").item(0).innerHTML=top['body'];
 
 		btn=ok.getElementsByClassName("post_collapse_head").item(0);
 		btni="post_heading_"+top['id'];
@@ -133,15 +131,38 @@ document.addEventListener("DOMContentLoaded",()=>{
 		btn.setAttribute("aria-controls",chli);
 		chl.setAttribute("id",chli);
 		chl.setAttribute("aria-labeledby",btni);
-		
+
+		let del=ok.getElementsByClassName("post_delete").item(0);
+		if((document.getElementById("is_admin").innerHTML=="yes"||document.getElementById("user_id").innerHTML==top["author"]["uid"])&&document.getElementById("view_mode").innerHTML!="create"){
+			del.addEventListener("click",()=>{
+				post("/delete_post",{"server":top['server'],"id":top['id']});
+			});
+		}else{
+			del.parentNode.removeChild(del);
+		}
+		let rep=ok.getElementsByClassName("post_reply").item(0);
+		if(document.getElementById("view_mode").innerHTML!="replies"){
+			rep.parentNode.removeChild(rep);
+		}else{
+			rep.addEventListener("click",()=>{
+				post("/create",{"server":top['server'],'parent':top["id"]})
+			});
+		}
 		snippify_string(top['snips'],ok.getElementsByClassName("post_code_snippets").item(0))
 		for(var mid in top['children']){
-			
 			postify(top['children'][mid], ok.getElementsByClassName("post_children").item(0));
 		}
 		console.log(ok)
 		daddy.appendChild(ok);
 	};
 
-	postify(tree,document.getElementById("post_base"));
+	var tree = JSON.parse(document.getElementById("post_tree_text"));
+	console.log(tree);
+	if(Array.isArray(tree)){
+		for(var i=0;i<tree.length;i++){
+			postify(tree.item(i),document.getElementById("post_base"));
+		}
+	}else{
+		postify(tree,document.getElementById("post_base"));
+	}
 });

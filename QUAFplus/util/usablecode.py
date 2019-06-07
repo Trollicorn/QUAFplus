@@ -37,9 +37,13 @@ def mk_post(title="",body="",snips="",author=-1,parent=-1,tags="",server=-1):
     if server!=-1:
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,author,parent,tags,str(datetime.datetime.now()),server))
+        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,int(author),int(parent),tags,str(datetime.datetime.now()),int(server)))
         db.commit()
         db.close()
+def rm_post(postid):
+    db = sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    c.execute("DELETE FROM posts WHERE id=?",(postid,))
 def quick_user_inf(uid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()

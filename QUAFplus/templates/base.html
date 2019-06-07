@@ -30,10 +30,15 @@
 		</div>
       </div>
     </div>
+	<script id="is_admin">{{ is_admin }}</script>
+	<script id="user_id">{{ user_id }}</script>
+	<script id="server">{{ server }}</script>
+	<script id="view_mode">{{ view_mode }}</script>
 	{% block posts %}
+	<script id="post_tree_text">{{ tree }}</script>
+	<div id="post_base"></div>
 	{% endblock %}
-    {% block body %}{% endblock %}
-
+	{% block body %}{% endblock %}
     <script id="py_snip_edit_source">
       <div style="margin:5px;">
 		<div class="row no-gutters">
@@ -67,7 +72,8 @@
 		</div>
       </div>
     </script>
-    <script id="py_snip_source">
+
+	<script id="py_snip_source">
       <div class="row no-gutters">
 		<div class="col-1">
 		  <div class="code_run" style="height:100%">
@@ -88,6 +94,30 @@
 		<br>
       </div>
     </script>
+	<script id="post_template">
+	  <div class="card post_collapse_accordion" style="width:100%;margin:3px;">
+		<div class="card-header">
+		  <div class="row no-gutters post_collapse_head" data-toggle="collapse" data-parent="#accordion" aria-expanded="true">
+			<div class="col-10">
+			  <h3 class="post_title" style="display:inline;"><strong></strong></h3>
+			  <span class="post_author_css"> by <span class="post_author"></span> on <span class="post_date"></span></span>
+			</div>
+			<div class="col-2 post_controls" style="text-align:right">
+			  <a style="padding:3px;" class="post_delete"><i class="fas fa-trash-alt"></i></a>
+			  <a style="padding:3px;" class="post_reply"><i class="fas fa-reply"></i></a>
+			</div>
+		  </div>
+		  <div id="collapseOne" class="collapse post_collapse_body" style="width:100%;" data-parent="#accordion">
+			<div class="post_body"></div>
+			<br>
+			<div class="post_code_snippets" style="width:100%"></div>
+			<br>
+			<div class="post_children">
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</script>
 
   </body>
 </html>

@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask, render_template, url_for, redirect, send_from_directory, request
+from flask import Flask, render_template, url_for, redirect, send_from_directory, request,flash,Request,session,make_response
 from flask_mail import Mail, Message
 from passlib.hash import sha256_crypt
 
@@ -25,9 +25,16 @@ app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
 
-@app.route('/')
+@app.route('/', methods = ["POST", "GET"])
 def main():
-    return render_template("index.html")
+    if"userid"not in session:
+        redirect("/login")
+    if request.method=="POST":
+        server=request.form["server"]if"server"in request.form else -1
+    else:
+        server=request.args["server"]if"server"in request.args else -1
+        
+    return render_template("home.html")
 
 @app.route('/authenticate', methods = ["POST", "GET"])
 def authenticate():
@@ -50,18 +57,34 @@ def authenticate():
 @app.route('/create',methods=["POST","GET"])
 def ok():
     if request.method=="POST":
-        parent=request.form["parent"]if"parent"in request.form else 0
-        server=request.form["server"]if"server"in request.form else 0
+        parent=request.form["parent"]if"parent"in request.form else -1
+        server=request.form["server"]if"server"in request.form else -1
     else:
-        parent=request.args["parent"]if"parent"in request.args else 0
-        server=request.args["server"]if"server"in request.args else 0
-    return render_template("create.html",parent=parent,server=server)
+        parent=request.args["parent"]if"parent"in request.args else -1
+        server=request.args["server"]if"server"in request.args else -1
+    if(server==-1):
+        return redirect("/")
+    return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),"user_id"=session["userid"],view_mode="create")
+
+#ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
 def okok():
-    print(request.form)
-    return redirect('/')
-    
-
+    if"userid" in session:
+        uid=int(session["userid"])
+        serverid=int(request.form["server"])
+        if database.check_user(uid,serverid):
+            database.mk_post(**request.form["title"],author=session["userid"])
+    return redirect("/")
+@app.route("/delete_post",methods=["POST"])
+def okokok():
+    if"userid"in session:
+        uid=int(session["userid"])
+        postid=int(request.form["post"])
+        postinfo=database.tree(postid)
+        serverid=postinfo["server"]
+        if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
+            database.rm_post(postid)
+    return redirect("/")
 if __name__ == "__main__":
     app.debug = True
     app.run()
