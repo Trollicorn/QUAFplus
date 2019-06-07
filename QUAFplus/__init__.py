@@ -97,7 +97,7 @@ def register():
     database.add_nonverified(email,code)
     mail.send(msg)
     flash('A verification code has been sent to your email')
-    return render_template("verification.html")
+    return redirect("/verify")
 #ImmutableMultiDict([('firstN', 'Theodore'), ('lastN', 'Peters'), ('email', 'tpeters@stuy.edu'), ('pass', '12345'), ('passConf', '12345'), ('code', 'VURK93')])
 @app.route('/verify',methods=["POST","GET"])
 def verify():
