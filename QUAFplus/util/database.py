@@ -28,7 +28,8 @@ def createDatabase():
 
     c.execute('''CREATE TABLE IF NOT EXISTS nonverified(
                 email TEXT,
-                pass TEXT,
+                firstN TEXT,
+                lastN TEXT,
                 code TEXT
     )'''
     )
@@ -102,13 +103,28 @@ def createAccount(email,pw,firstN,lastN):
     db.close()
     return "Account creation successful"
 
-def addNonverified(email,pw,code):
+def addNonverified(email,firstN,lastN,code):
     db = sqlite3.connect("../data/quaf.db")
     c = db.cursor()
-    c.execute("INSERT INTO nonverified(email, pass, code) VALUES(?, ?, ?)")
+    c.execute("INSERT INTO nonverified(email, firstN, lastN, code) VALUES(?,?, ?, ?)")
     db.commit()
     db.close()
     return "added"
+
+def getCode(email):
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+    stuff = c.execute('SELECT code FROM nonverified WHERE email = ?',(email,)).fetchone()
+    return stuff[0]
+
+def addVerified(email,passhash,code):
+    db = sqlite3.connect("../data/quaf.db")
+    c = db.cursor()
+    c.execute("SELECT firstN,lastN FROM nonverified WHERE email, firstN, lastN, code) VALUES(?,?, ?, ?)")
+    db.commit()
+    db.close()
+    return "added"
+
 
 def activateAccount(email,activation):
     db = sqlite3.connect("../data/quaf.db")

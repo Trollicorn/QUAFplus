@@ -59,40 +59,54 @@ def authenticate():
 @app.route('/register',methods=['POST','GET'])
 def register():
     '''
-    should be passed email (user), password, confirmation password
+    should be passed email, first name, and last name
+    registers the user
     '''
     formkeys = request.form.keys()
-    if not ('user' in formkeys and
-            'pass' in formkeys and
-            'passConf' in formkeys and
-            'fName' in formkeys and
-            'lName' in formkeys):
+    if not ('email' in formkeys):
         flash("Fill out all fields")
         return render_template('signup.html')
-    pw = request.form['pass']
-    pwc = request.form['passConf']
-    email = request.form['user'].replace(' ','')
+    email = request.form['email'].replace(' ','')
     at = email.find('@')
     if at != -1:
         domain = email[at:]
     if at == -1 or domain != '@stuy.edu': #not valid stuy.edu
         flash('enter valid @stuy.edu address')
         return render_template('signup.html')
-    if pw != pwc:
-        flash("passwords don't match")
-        return render_template('signup.html')
     msg = Message('QUAF+ Verification',recipients = [email])
     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
-    msg.body = 'Your QUAF+ verification code is' + code +'. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
-    passmail = email + pw
-    passhash = sha256_crypt.hash(passmail)
-
-    addNonverified(email,passhash,code)
-
+    msg.body = 'Your QUAF+ verification code is' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
+    database.addNonverified(email,fName,lName,code)
     mail.send(msg)
-
     return render_template('signup.html')
 
+@app.route('/verify',methods=["POST","GET"])
+def verify():
+    formkeys = request.form.keys()
+    if not ('email' in formkeys and
+            'pass' in formkeys and
+            'passConf' in formkeys and
+            'code' in formkeys' and
+            'fName' in formkeys and
+            'lName' in formkeys
+            ):
+        flash("Fill out all fields")
+        return render_template('signup.html')
+    pw = request.form['pass'].strip()
+    pwc = request.form['passConf'].strip()
+    email = request.form['email'].replace(' ','')
+    code = request.form['code'].strip()
+    activation = database.getCode(email)
+    if pw != pwc:
+        flash("passwords don't match")
+        return render_template('verification.html')
+    if code != activation:
+        flash("activation code does not match")
+        return render_template('verification.html')
+    passmail = email + pw
+    passhash = sha256_crypt.hash(passmail)
+    database.addVerified(email,passhash,code)
+    return render_template('login.html')
 
 @app.route('/create',methods=["POST","GET"])
 def ok():
