@@ -100,7 +100,7 @@ def verify():
     if not ('email' in formkeys and
             'pass' in formkeys and
             'passConf' in formkeys and
-            'code' in formkeys' and
+            'code' in formkeys and
             'firstN' in formkeys and
             'lastN' in formkeys
             ):
