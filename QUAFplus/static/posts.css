@@ -45,3 +45,15 @@
 	margin-left: 100px;
 	padding: 5px;
 }
+.btn-announce{
+	background-color:#671B96;
+}
+.btn-announce:hover{
+	background-color:#5C1787;
+}
+.btn_question{
+	background-color:#9E0000;
+}
+.btn_question:hover{
+	background-color:#8A0000;
+}

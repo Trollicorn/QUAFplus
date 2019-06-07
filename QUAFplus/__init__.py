@@ -88,6 +88,16 @@ def ok():
         return redirect("/")
     return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
 
+@app.route("/login",methods=["GET","POST"])
+def eggnogg():
+    if request.method=="GET":
+        return render_template("login.html")
+    else:
+        if"username"not in request.form or"password"not in request.form:
+            flash("Bad request")
+            return render_template("login.html")
+        
+
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
 def okok():
@@ -117,7 +127,6 @@ def okokokok():
         if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
             database.ans_post(postid)
     return redirect("/")
-
 
 if __name__ == "__main__":
     app.debug = True

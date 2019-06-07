@@ -1,6 +1,8 @@
 import sqlite3
 import datetime
 
+from passlib.hash import sha256_crypt
+
 DB_FILE="quaf.db"
 
 
@@ -138,4 +140,15 @@ def make_server(uid, name, description, password):
     c = db.cursor()
     c.execute("INSERT INTO servers(name,description,members,admins,password) VALUES(?,?,?,?,?);",(name,dscription,str(uid),str(uid),password))
     db.commit()
+    db.close()
+
+def user_exists(email):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    return c.execute("SELECT * FROM users WHERE email=?;",(email,)).fetchone()!=None
+    db.close()
+def check_password(email,password):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    return c.execute("SELECT * FROM users WHERE email=? AND pass=?;",(email,sha256_crypt.hash(email+password))).fetchone()!=None
     db.close()
