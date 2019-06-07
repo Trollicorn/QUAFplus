@@ -155,14 +155,34 @@ document.addEventListener("DOMContentLoaded",()=>{
 		console.log(ok)
 		daddy.appendChild(ok);
 	};
-
-	var tree = JSON.parse(document.getElementById("post_tree_text"));
-	console.log(tree);
-	if(Array.isArray(tree)){
-		for(var i=0;i<tree.length;i++){
-			postify(tree.item(i),document.getElementById("post_base"));
+	if document.getElementById("post_tree_text"){
+		var tree = JSON.parse(document.getElementById("post_tree_text"));
+		console.log(tree);
+		if(Array.isArray(tree)){
+			for(var i=0;i<tree.length;i++){
+				postify(tree.item(i),document.getElementById("post_base"));
+			}
+		}else{
+			postify(tree,document.getElementById("post_base"));
 		}
-	}else{
-		postify(tree,document.getElementById("post_base"));
+	}
+
+	var make_server_link=(s)=>{
+		let ok=document.createElement('div');
+		ok.setAttribute("class",document.getElementById("server")!=s['id']?"server_link":"server_link server_selected");
+		ok.innerHTML=document.getElementById("server_link").innerHTML;
+		ok.getElementsByClassName("server_link_text").item(0).innerHTML=s['name'];
+		ok.addEventListener("click",()=>{
+			post("/",{"server":s['id']});
+		});
+		documentGetElementById("server_list").appendChild(ok);
+	};
+	
+	var slsl=documnet.getElementById("server_list");
+	if(slsl){
+		lssl=JSON.parse(slsl.innerHTML);
+		for(var i=0;i<lssl.length;i++){
+			make_server_link(lssl.item(i));
+		}
 	}
 });

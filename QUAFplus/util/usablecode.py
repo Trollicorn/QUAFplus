@@ -70,13 +70,22 @@ def user_servers(uid):
     c = db.cursor()
     servers=c.execute("SELECT id, users FROM SERVERS;").fetchall()
     return[o[0]for o in servers if uid in[int(i)for i in o[1].split(",")]]
+def user_servers_dict(uid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    servers=c.execute("SELECT id, users, name FROM SERVERS;").fetchall()
+    return[{'id':o[0],'name':o[2]}for o in servers if uid in[int(i)for i in o[1].split(",")]]
 def check_admin(uid,serverid):
+    if serverid==-1:
+        return False
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     o=c.execute("SELECT admins FROM SERVERS where id=?;",(serverid,)).fetchone()
     db.close()
     return str(uid)in o[0].split(",")
 def check_user(uid,serverid):
+    if serverid==-1:
+        return False
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     o=c.execute("SELECT users FROM SERVERS where id=?;",(serverid,)).fetchone()

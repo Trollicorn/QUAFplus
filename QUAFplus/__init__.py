@@ -28,13 +28,15 @@ mail = Mail(app)
 @app.route('/', methods = ["POST", "GET"])
 def main():
     if"userid"not in session:
-        redirect("/login")
+        return redirect("/login")
+    uid=int(session["userid"])
     if request.method=="POST":
         server=request.form["server"]if"server"in request.form else -1
+        post=request.form["post"]if"post"in request.form else -1
     else:
         server=request.args["server"]if"server"in request.args else -1
-        
-    return render_template("home.html")
+        post=request.args["post"]if"post"in request.args else -1
+    return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
 
 @app.route('/authenticate', methods = ["POST", "GET"])
 def authenticate():
@@ -65,7 +67,7 @@ def register():
             'passConf' in formkeys and
             'fName' in formkeys and
             'lName' in formkeys):
-        flash("fill out all fields")
+        flash("Fill out all fields")
         return render_template('signup.html')
     pw = request.form['pass']
     pwc = request.form['passConf']
@@ -102,7 +104,7 @@ def ok():
         server=request.args["server"]if"server"in request.args else -1
     if(server==-1):
         return redirect("/")
-    return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create")
+    return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
 
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
