@@ -1,2 +1,5 @@
+from os import urandom
+
+secret_key = urandom(32)
 MAIL_USERNAME = 'EMAIL@gmail.com'
 MAIL_PASSWORD = 'EMAIL-PASSWORD'

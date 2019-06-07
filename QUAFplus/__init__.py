@@ -15,6 +15,9 @@ from util import usablecode as database
 app = Flask(__name__)
 
 DIR = "/var/www/QUAFplus/QUAFplus/"
+
+app.secret_key = pp.secret_key
+
 #mail stuff
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465  #using SSL, do 587 for TLS
