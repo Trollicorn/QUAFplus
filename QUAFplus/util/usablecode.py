@@ -214,7 +214,7 @@ def user_exists(email):
     db.close()
 
 
-def check_password(email, passhash):
+def check_password(email, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     tmp = c.execute("SELECT * FROM users WHERE email=? AND pass=?;",
