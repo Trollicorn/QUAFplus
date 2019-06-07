@@ -1,7 +1,9 @@
 import sqlite3
 import datetime
 
-DB_FILE="../data/quaf.db"
+from passlib.hash import sha256_crypt
+
+DB_FILE="quaf.db"
 
 
 def db_reset():
@@ -14,7 +16,7 @@ def db_reset():
     c.execute("DROP TABLE IF EXISTS servers;")
     c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, members TEXT, admins TEXT, password TEXT);")
     c.execute("DROP TABLE IF EXISTS nonverified;")
-    c.execute("CREATE TABLE nonverified(email TEXT, pass TEXT, code TEXT);")
+    c.execute("CREATE TABLE nonverified(email TEXT, code TEXT);")
     db.commit()
     db.close()
 def tree(postid):
@@ -35,17 +37,25 @@ def get_parent(childid):
     a=c.execute("SELECT parentid FROM posts WHERE id=?;",(childid,)).fetchone()
     db.close()
     return a[0]
-def mk_post(title="",body="",snips="",author=-1,parent=-1,tags="",server=-1):
+def mk_post(title="",body="",snips="",author=-1,parent=-1,tags="",server=-1,question=False):
     if server!=-1:
         db = sqlite3.connect(DB_FILE)
         c = db.cursor()
-        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,int(author),int(parent),tags,str(datetime.datetime.now()),int(server)))
+        c.execute("INSERT INTO posts(title, body, snips, author, parent, tags, date, server, answered, best,question) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",(title,body,snips,int(author),int(parent),tags,str(datetime.datetime.now()),int(server),0,0,1 if question else 0))
         db.commit()
         db.close()
 def rm_post(postid):
     db = sqlite3.connect(DB_FILE)
     c=db.cursor()
-    c.execute("DELETE FROM posts WHERE id=?",(postid,))
+    c.execute("DELETE FROM posts WHERE id=?;",(postid,))
+    db.commit()
+    db.close()
+def ans_post(postid):
+    db = sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    c.execute("UPDATE posts SET answered=1 WHERE id=?;",(postid,))
+    db.commit()
+    db.close()
 def quick_user_inf(uid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
@@ -131,3 +141,43 @@ def make_server(uid, name, description, password):
     c.execute("INSERT INTO servers(name,description,members,admins,password) VALUES(?,?,?,?,?);",(name,dscription,str(uid),str(uid),password))
     db.commit()
     db.close()
+def user_exists(email):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    return c.execute("SELECT * FROM users WHERE email=?;",(email,)).fetchone()!=None
+    db.close()
+def check_password(email,passhash):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    return c.execute("SELECT * FROM users WHERE email=? AND pass=?;",(email,passhash)).fetchone()!=None
+    db.close()
+
+def get_id(email,passhash):
+    db=sqlite3.connect(DB_FILE)
+    c=db.cursor()
+    thing = c.execute("SELECT id FROM users WHERE email=? AND pass=?",(email,passhash)).fetchone()
+    return thing[0]
+    
+def add_nonverified(email,firstN,lastN,code):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    c.execute("INSERT INTO nonverified(email, firstN, lastN, code) VALUES(?,?,?,?)",(email,firstN,lastN,code,))
+    db.commit()
+    db.close()
+    return "added"
+
+def get_code(email):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    stuff = c.execute('SELECT code FROM nonverified WHERE email = ?',(email,)).fetchone()
+    db.close()
+    return stuff[0]
+
+def add_verified(email,passhash,firstN,lastN):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    userdb="INSERT INTO users(firstN, lastN, email, pass, numPost, numDeleted, numPost) VALUES(?, ?, ?, ?, ?, ?, ?)"
+    c.execute(userdb,(firstN,lastN,email,passhash,0,0,0,))
+    db.commit()
+    db.close()
+    return "added"

@@ -38,23 +38,32 @@ def main():
         post=request.args["post"]if"post"in request.args else -1
     return render_template("home.html",server=server,tree=(database.home(server)if post==-1 else database.tree(postid))if server!=-1 and database.check_user(uid,server) else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="home"if-1==post else"replies",server_list=database.user_servers_dict(uid))
 
-@app.route('/authenticate', methods = ["POST", "GET"])
-def authenticate():
-    """
-    status = ''
+@app.route('/login',methods=["POST","GET"])
+def login():
+    if not ('email' in formkeys and
+            'pass' in formkeys
+            ):
+        flash("Fill out all fields")
+        return render_template('login.html')
+    pw = request.form['pass'].strip()
+    email = request.form['email'].replace(' ','')
+    passhash = sha256_crypt.hash(email+password)
+    if not database.check_password(email,passhash):
+        flash('invalid credentials')
+        return render_template('login.html')
+    id = database.get_id(email,passhash)
+    session['userid'] = id
+    return redirect('/')
 
-    if request.method == "GET" or "user" not in request.form.keys():
-        return redirect('/')
-
-    if "passConf" in request.form.keys():
-        print("\n ACC CREATION \n")
-        status = database.createAccount(request.form["user"]. request.form["pswd"], request.form["passConf"], request.form["firstN"], request.form["lastN"])
-
+@app.route('/logout',methods=['POST','GET'])
+def logout():
+    if 'userid' in session.keys():
+        session.pop('userid')
+        flash('logged out')
     else:
-        print("\n INFO CONFIRMATION \n")
-        status = database.checkInfo(request.form["user"], request.form["pswd"])
-    """
-    return render_template("signup.html")
+        flash('not logged in')
+    return render_template('login.html')
+
 
 @app.route('/register',methods=['POST','GET'])
 def register():
@@ -76,9 +85,10 @@ def register():
     msg = Message('QUAF+ Verification',recipients = [email])
     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
     msg.body = 'Your QUAF+ verification code is' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
-    database.addNonverified(email,fName,lName,code)
+    database.add_nonverified(email,fName,lName,code)
     mail.send(msg)
-    return render_template('signup.html')
+    flash('A verification code has been sent to your email')
+    return render_template('verification.html')
 
 @app.route('/verify',methods=["POST","GET"])
 def verify():
@@ -87,8 +97,8 @@ def verify():
             'pass' in formkeys and
             'passConf' in formkeys and
             'code' in formkeys' and
-            'fName' in formkeys and
-            'lName' in formkeys
+            'firstN' in formkeys and
+            'lastN' in formkeys
             ):
         flash("Fill out all fields")
         return render_template('signup.html')
@@ -96,16 +106,21 @@ def verify():
     pwc = request.form['passConf'].strip()
     email = request.form['email'].replace(' ','')
     code = request.form['code'].strip()
-    activation = database.getCode(email)
+    firstN = request.form['firstN'].strip()
+    lastN = request.form['lastN'].strip()
+    if user_exists(email):
+        flash('already verified')
+        return render_template('verification.html')
     if pw != pwc:
         flash("passwords don't match")
         return render_template('verification.html')
+    activation = database.get_code(email)
     if code != activation:
         flash("activation code does not match")
         return render_template('verification.html')
     passmail = email + pw
     passhash = sha256_crypt.hash(passmail)
-    database.addVerified(email,passhash,code)
+    database.add_verified(email,passhash,firstN,lastN)
     return render_template('login.html')
 
 @app.route('/create',methods=["POST","GET"])
@@ -119,6 +134,16 @@ def ok():
     if(server==-1):
         return redirect("/")
     return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
+
+@app.route("/login",methods=["GET","POST"])
+def eggnogg():
+    if request.method=="GET":
+        return render_template("login.html")
+    else:
+        if"username"not in request.form or"password"not in request.form:
+            flash("Bad request")
+            return render_template("login.html")
+
 
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
@@ -138,6 +163,16 @@ def okokok():
         serverid=postinfo["server"]
         if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
             database.rm_post(postid)
+    return redirect("/")
+@app.route("/mark_answered",methods=["POST"])
+def okokokok():
+    if"userid"in session:
+        uid=int(session["userid"])
+        postid=int(request.form["post"])
+        postinfo=database.tree(postid)
+        serverid=postinfo["server"]
+        if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
+            database.ans_post(postid)
     return redirect("/")
 
 if __name__ == "__main__":
