@@ -173,6 +173,24 @@ def okokokok():
             database.ans_post(postid)
     return redirect("/")
 
+@app.route("/profile", methods=["GET"])
+def profile():
+    if "userid" in session:
+        uid = int(session["userid"])
+        stats = database.user_profile(uid)
+        # stats = database.user_profile(1)
+        ft = stats['first']
+        lt = stats['last']
+        em = stats['email']
+        nP = stats['numPost']
+        nD = stats['numDeleted']
+        nB = stats['numBest']
+
+        return render_template("profile.html", first = ft, last = lt, email = em, numPost = nP, numDeleted = nD, numBest = nB )
+
+    else:
+        return redirect("/")
+
 if __name__ == "__main__":
     app.debug = True
     app.run()
