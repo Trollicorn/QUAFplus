@@ -93,7 +93,7 @@ def register():
     msg = Message('QUAF+ Verification',recipients = [email])
     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
     msg.body = 'Your QUAF+ verification code is' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
-    database.add_nonverified(email,fName,lName,code)
+    database.add_nonverified(email,code)
     mail.send(msg)
     flash('A verification code has been sent to your email')
     return render_template('verification.html')
