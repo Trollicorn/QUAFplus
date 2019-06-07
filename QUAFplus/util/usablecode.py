@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 
-from passlib.hash import sha256_crypt
+import hashlib
 
 DB_FILE = "quaf.db"
 
@@ -10,7 +10,7 @@ def db_reset():
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     c.execute("DROP TABLE IF EXISTS posts;")
-    c.execute("CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, snips TEXT, author INT, parent INT, tags TEXT, date TEXT, server INTEGER, answered INTEGER, best INTEGER, question INTEGER);")
+    c.execute("CREATE TABLE posts(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, body TEXT, snips TEXT, author INT, parent INT, tags TEXT, date TEXT, server INTEGER, answered INTEGER, best INTEGER, questgion INTEGER);")
     c.execute("DROP TABLE IF EXISTS users;")
     c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, email TEXT, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER);")
     c.execute("DROP TABLE IF EXISTS servers;")
@@ -212,13 +212,13 @@ def user_exists(email):
     tmp = c.execute("SELECT * FROM users WHERE email=?;",
                     (email,)).fetchone() != None
     db.close()
+    return tmp
 
-
-def check_password(email, passhash):
+def check_password(email, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     tmp = c.execute("SELECT * FROM users WHERE email=? AND pass=?;",
-                    (email, sha256_crypt.hash(email+password))).fetchone() != None
+                    (email, hashlib.md5((email+password).encode("utf-8")).hexdigest())).fetchone() != None
     db.close()
     return tmp
 
@@ -232,11 +232,11 @@ def get_uid(email):
     return tmp
 
 
-def add_nonverified(email, firstN, lastN, code):
+def add_nonverified(email, code):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("INSERT INTO nonverified(email, firstN, lastN, code) VALUES(?,?,?,?)",
-              (email, firstN, lastN, code,))
+    c.execute("INSERT INTO nonverified(email, code) VALUES(?,?)",
+              (email,  code,))
     db.commit()
     db.close()
     return "added"

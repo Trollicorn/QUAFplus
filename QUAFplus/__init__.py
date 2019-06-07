@@ -2,7 +2,7 @@ import datetime
 
 from flask import Flask, render_template, url_for, redirect, send_from_directory, request,flash,Request,session,make_response
 from flask_mail import Mail, Message
-from passlib.hash import sha256_crypt
+import hashlib
 import string, random, os
 try:
     from QUAFplus import pp as pp
@@ -47,21 +47,21 @@ def login():
     if request.method=="GET":
         return render_template("login.html")
     else:
-        formkeys = request.form.keys()
+        formkeys = request.form
         if not ('email' in formkeys and
                 'pass' in formkeys
                 ):
             flash("Fill out all fields")
             return render_template('login.html')
-        pw = request.form['pass'].strip()
-        email = request.form['email'].replace(' ','')
-        if not user_exists(email):
+        pw = request.form['pass']
+        email = request.form['email'].strip()
+        if not database.user_exists(email):
             flash("User does not exist with that email")
             return render_template("login.html")
         if not database.check_password(email,pw):
-            flash('invalid credentials')
+            flash('Invalid credentials')
             return render_template('login.html')
-        id = database.get_id(email)
+        id = database.get_uid(email)
         session['userid'] = id
         return redirect('/')
 
@@ -80,6 +80,7 @@ def register():
     registers the user
     '''
     formkeys = request.form.keys()
+    print(request.form)
     if not ('email' in formkeys):
         flash("Fill out all fields")
         return render_template('signup.html')
@@ -92,31 +93,34 @@ def register():
         return render_template('signup.html')
     msg = Message('QUAF+ Verification',recipients = [email])
     code = ''.join(random.choice(string.ascii_uppercase + string.digits) for n in range(6))
-    msg.body = 'Your QUAF+ verification code is' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
-    database.add_nonverified(email,fName,lName,code)
+    msg.body = 'Your QUAF+ verification code is ' + code + '. Go back to the site and go to the /verify route to verify your account.\n\n If you recieved this message in error, please ignore/delete this email.'
+    database.add_nonverified(email,code)
     mail.send(msg)
     flash('A verification code has been sent to your email')
-    return render_template('verification.html')
-
+    return redirect("/verify")
+#ImmutableMultiDict([('firstN', 'Theodore'), ('lastN', 'Peters'), ('email', 'tpeters@stuy.edu'), ('pass', '12345'), ('passConf', '12345'), ('code', 'VURK93')])
 @app.route('/verify',methods=["POST","GET"])
 def verify():
-    formkeys = request.form.keys()
+    if request.method=="GET":
+        return render_template('verification.html')
+    print(request.form)
+    formkeys = request.form
     if not ('email' in formkeys and
             'pass' in formkeys and
             'passConf' in formkeys and
             'code' in formkeys and
             'firstN' in formkeys and
             'lastN' in formkeys
-            ):
+    ):
         flash("Fill out all fields")
-        return render_template('signup.html')
-    pw = request.form['pass'].strip()
-    pwc = request.form['passConf'].strip()
+        return render_template('verification.html')
+    pw = request.form['pass']
+    pwc = request.form['passConf']
     email = request.form['email'].replace(' ','')
     code = request.form['code'].strip()
     firstN = request.form['firstN'].strip()
     lastN = request.form['lastN'].strip()
-    if user_exists(email):
+    if database.user_exists(email):
         flash('already verified')
         return render_template('verification.html')
     if pw != pwc:
@@ -126,10 +130,10 @@ def verify():
     if code != activation:
         flash("activation code does not match")
         return render_template('verification.html')
-    passmail = email + pw
-    passhash = sha256_crypt.hash(passmail)
+    passhash = hashlib.md5((email+pw).encode("utf-8")).hexdigest()
+
     database.add_verified(email,passhash,firstN,lastN)
-    return render_template('login.html')
+    return redirect("/login")
 
 @app.route('/create',methods=["POST","GET"])
 def ok():
