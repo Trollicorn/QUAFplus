@@ -14,7 +14,7 @@ def db_reset():
     c.execute("DROP TABLE IF EXISTS users;")
     c.execute("CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, firstN TEXT, lastN TEXT, email TEXT, pass TEXT, numPost INTEGER, numDeleted INTEGER, numBest INTEGER);")
     c.execute("DROP TABLE IF EXISTS servers;")
-    c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, members TEXT, admins TEXT, password TEXT);")
+    c.execute("CREATE TABLE servers(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, users TEXT, admins TEXT, password TEXT);")
     c.execute("DROP TABLE IF EXISTS nonverified;")
     c.execute("CREATE TABLE nonverified(email TEXT, code TEXT);")
     db.commit()
@@ -121,6 +121,16 @@ def user_servers_dict(uid):
     servers = c.execute("SELECT id, members, name FROM SERVERS;").fetchall()
     return[{'id': o[0], 'name':o[2]}for o in servers if uid in[int(i)for i in o[1].split(",")]]
 
+def all_users(serverid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT members FROM servers WHERE id = ?", (serverid,)).fetchone(0)
+    list = []
+    for i in b.split(","):
+        list.append({"name": i})
+    return list
+
+
 
 def check_admin(uid, serverid):
     if serverid == -1:
@@ -154,11 +164,27 @@ def join_server(uid, serverid):
         db.commit()
         db.close()
 
+
+def get_serverName(serverid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT name FROM servers WHERE id=?;", (serverid,)).fetchone()[0]
+    return b
+
+def get_serverid(name):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT * FROM servers WHERE name=?;", (name,)).fetchone()[0]
+    return b
+
+
 def get_spass(serverid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    a = c.execute("SELECT password FROM servers where id=?;",(serverid,)).fetchone()[0]
+    a = c.execute("SELECT password FROM servers where id=?;",
+                  (serverid,)).fetchone()[0]
     return a
+
 
 def leave_server(uid, serverid):
     if check_user(uid, serverid):
@@ -200,8 +226,8 @@ def remove_admin(uid, serverid):
 def make_server(uid, name, description, password):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    c.execute("INSERT INTO servers(name,description,members,admins,password) VALUES(?,?,?,?,?);",
-              (name, dscription, str(uid), str(uid), password))
+    c.execute("INSERT INTO servers(name,description,users,admins,password) VALUES(?,?,?,?,?);",
+              (name, description, str(uid), str(uid), password))
     db.commit()
     db.close()
 
@@ -213,6 +239,7 @@ def user_exists(email):
                     (email,)).fetchone() != None
     db.close()
     return tmp
+
 
 def check_password(email, password):
     db = sqlite3.connect(DB_FILE)

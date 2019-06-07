@@ -90,10 +90,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 		document.body.appendChild(form);
 		form.submit();
 	}
-	var lnktothing=document.getElementById("create_post_link");
+	var lnktothink=document.getElementById("create_post_link");
 	if(lnktothink){
 		lnktothink.addEventListener("click",()=>{
-			post("/create_post",{"server":document.getElementById("server").innerHTML,"parent":-1})
+			post("/create",{"server":document.getElementById("server").innerHTML,"parent":-1});
 		});
 	}
 	var mkpost=(question)=>{
@@ -118,9 +118,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 	if(mkpstbtn2){
 		mkpstbtn2.addEventListener("click",()=>{mkpost(true);});
 	}
-
 	
-	var top_postify(top,daddy,inner)=>{
+	
+	var top_postify=(top,daddy,inner)=>{
 		console.log(top)
 		let ok=document.createElement('div');
 		ok.setAttribute("class","post");
@@ -213,12 +213,12 @@ document.addEventListener("DOMContentLoaded",()=>{
 		console.log(ok)
 		daddy.appendChild(ok);
 	};
-	if document.getElementById("post_tree_text"){
-		var tree = JSON.parse(document.getElementById("post_tree_text"));
+	if (document.getElementById("post_tree_text")){
+		var tree = eval(document.getElementById("post_tree_text").innerHTML.replace(/&#39;/gm,"'"));
 		console.log(tree);
 		if(Array.isArray(tree)){
 			for(var i=0;i<tree.length;i++){
-				top_postify(tree.item(i),document.getElementById("post_base"),false);
+				top_postify(tree[i],document.getElementById("post_base"),false);
 			}
 		}else{
 			top_postify(tree,document.getElementById("post_base"),true);
@@ -227,20 +227,22 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 	var make_server_link=(s)=>{
 		let ok=document.createElement('div');
-		ok.setAttribute("class",document.getElementById("server")!=s['id']?"server_link":"server_link server_selected");
+		ok.setAttribute("class",document.getElementById("server").innerHTML!=s['id']?"server_link":"server_link server_selected");
 		ok.innerHTML=document.getElementById("server_link").innerHTML;
 		ok.getElementsByClassName("server_link_text").item(0).innerHTML=s['name'];
 		ok.addEventListener("click",()=>{
 			post("/",{"server":s['id']});
 		});
-		documentGetElementById("server_list").appendChild(ok);
+		document.getElementById("server_list_main").appendChild(ok);
 	};
 	
-	var slsl=documnet.getElementById("server_list");
+	var slsl=document.getElementById("server_list");
 	if(slsl){
-		lssl=JSON.parse(slsl.innerHTML);
+		txt=slsl.innerHTML.replace(/&#39;/gm,"'");
+		lssl=eval(txt);
+		console.log(lssl);
 		for(var i=0;i<lssl.length;i++){
-			make_server_link(lssl.item(i));
+			make_server_link(lssl[i]);
 		}
 	}
 });

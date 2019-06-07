@@ -6,9 +6,11 @@ import hashlib
 import string, random, os
 try:
     from QUAFplus import pp as pp
+    from QUAF.util import usablecode as database
 except ModuleNotFoundError:
     import pp
 from util import usablecode as database
+
 
 #from util import database
 
@@ -198,45 +200,61 @@ def profile():
 
 @app.route('/make_server',methods=["GET","POST"])
 def server_make():
+    if request.method=="GET":
+        return render_template("make_server.html")
     formkeys = request.form.keys()
     if not ('name' in formkeys and
             'description' in formkeys and
             'password' in formkeys
             ):
         flash("Fill out all fields")
-        return render_template('base.html') #OR WHEREVER ITS CREATED
+        return render_template('make_server.html') #OR WHEREVER ITS CREATED
     name = request.form['name'].strip()
     description = request.form['description'].strip()
     password = request.form['password'].strip()
     database.make_server(session['userid'],name,description,password)
-    return render_template('base.html') #OR WHEREEVER
+    return redirect("/")
 
 @app.route('/join_server',methods=['GET','POST'])
 def server_join():
+    if request.method=="GET":
+        return render_template('join_server.html')
     formkeys = request.form.keys()
     if not ('serverid' in formkeys and
             'password' in formkeys):
-        flash ('need server id')
-        return render_template('base.html') #OR WHEREVER
+        flash ('Fill out fields')
+        return render_template('join_server.html') #OR WHEREVER
     password = request.form['password']
     serverid = request.form['serverid'].strip()
     spass = database.get_spass(serverid)
     if password != spass:
-        flash('incorrect password')
-        return render_template('base.html') #OR WHEREVER
+        flash('Incorrect password')
+        return render_template('join_server.html') #OR WHEREVER
     join_server(session['userid'],serverid)
-    return render_template('base.html')
+    return redirect("/")
 
 @app.route('/leave_server',methods=['GET','POST'])
 def server_leave():
     formkeys = request.form.keys()
     if not ('serverid' in formkeys):
-        flash ('need server id')
-        return render_template('base.html') #OR WHEREVER
+        return redirect("/") #OR WHEREVER
     serverid = request.form['serverid'].strip()
     leave_server(session['userid'],serverid)
-    return render_template('base.html') #OR WHEREVER
+    return redirect("/")
 
+@app.route('/server_info', methods=['GET', 'POST'])
+def server_info():
+    #im assuming there will be a form where someone selects the server - perhaps a button the teacher can select
+    formkeys = request.form.keys()
+    if not ('serverid' in formkeys):
+        flash ('Need server id')
+        return redirect("/") #OR WHEREVER
+    serverid = request.form['serverid'].strip()
+    serverName = database.get_serverName(serverid)
+
+    users = database.all_users(serverid)
+
+    return render_template('server_info.html', allUsers=users, server=severName)
 
 if __name__ == "__main__":
     #database.db_reset()
