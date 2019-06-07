@@ -155,4 +155,9 @@ theodorep -- 01:31 2019-06-07
 main body of the app is probably functional but i can't test it because other members of the group have not bothered to implement the basic functionality that was assigned to them
 --------------------------------------------------------------
 
+boL -- 6:28 2019-06-07
+---------------------------------------------------------------
+-wrote profile & display of members
+-unfortunately had an issue with flask app not being able to run(temporarily fixed by PM Uddin!)
+---------------------------------------------------------------
 ==============================================================
