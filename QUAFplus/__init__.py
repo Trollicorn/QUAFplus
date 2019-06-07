@@ -40,33 +40,37 @@ def main():
 
 @app.route('/login',methods=["POST","GET"])
 def login():
-    if not ('email' in formkeys and
-            'pass' in formkeys
-            ):
-        flash("Fill out all fields")
-        return render_template('login.html')
-    pw = request.form['pass'].strip()
-    email = request.form['email'].replace(' ','')
-    passhash = sha256_crypt.hash(email+password)
-    if not database.check_password(email,passhash):
-        flash('invalid credentials')
-        return render_template('login.html')
-    id = database.get_id(email,passhash)
-    session['userid'] = id
-    return redirect('/')
-
-@app.route('/logout',methods=['POST','GET'])
-def logout():
-    if 'userid' in session.keys():
-        session.pop('userid')
-        flash('logged out')
+    if request.method=="GET":
+        return render_template("login.html")
     else:
-        flash('not logged in')
-    return render_template('login.html')
+        formkeys = request.form.keys()
+        if not ('email' in formkeys and
+                'pass' in formkeys
+                ):
+            flash("Fill out all fields")
+            return render_template('login.html')
+        pw = request.form['pass'].strip()
+        email = request.form['email'].replace(' ','')
+        if not user_exists(email):
+            flash("User does not exist with that email")
+            return render_template("login.html")
+        if not database.check_password(email,pw):
+            flash('invalid credentials')
+            return render_template('login.html')
+        id = database.get_id(email)
+        session['userid'] = id
+        return redirect('/')
 
+@app.route("/logout")
+def logout():
+    if'userid'in session:
+        session.pop("userid")
+    return redirect("/")
 
 @app.route('/register',methods=['POST','GET'])
 def register():
+    if request.method=="GET":
+        return render_template("signup.html")
     '''
     should be passed email, first name, and last name
     registers the user
@@ -134,16 +138,6 @@ def ok():
     if(server==-1):
         return redirect("/")
     return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
-
-@app.route("/login",methods=["GET","POST"])
-def eggnogg():
-    if request.method=="GET":
-        return render_template("login.html")
-    else:
-        if"username"not in request.form or"password"not in request.form:
-            flash("Bad request")
-            return render_template("login.html")
-
 
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])

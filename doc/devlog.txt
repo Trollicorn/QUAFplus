@@ -150,5 +150,9 @@ theodorep -- 22:59 2019-06-06
 integrated displays, server navigation, a bunch of other usability and bug fixes i forget
 --------------------------------------------------------------
 
+theodorep -- 01:31 2019-06-07
+--------------------------------------------------------------
+main body of the app is probably functional but i can't test it because other members of the group have not bothered to implement the basic functionality that was assigned to them
+--------------------------------------------------------------
 
 ==============================================================

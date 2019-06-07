@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 			daddy.appendChild(ok);
 		}
     }
+
 	var post=(path,params)=>{
 		const form = document.createElement('form');
 		form.method = 'post';
@@ -88,6 +89,12 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		document.body.appendChild(form);
 		form.submit();
+	}
+	var lnktothing=document.getElementById("create_post_link");
+	if(lnktothink){
+		lnktothink.addEventListener("click",()=>{
+			post("/create_post",{"server":document.getElementById("server").innerHTML,"parent":-1})
+		});
 	}
 	var mkpost=(question)=>{
 		console.log("submitting");
