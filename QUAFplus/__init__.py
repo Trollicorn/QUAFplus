@@ -243,6 +243,7 @@ def server_leave():
 
 @app.route('/server_info', methods=['GET', 'POST'])
 def server_info():
+    #im assuming there will be a form where someone selects the server - perhaps a button the teacher can select
     formkeys = request.form.keys()
     if not ('serverid' in formkeys):
         flash ('Need server id')
