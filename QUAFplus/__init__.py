@@ -138,6 +138,9 @@ def verify():
 
 @app.route('/create',methods=["POST","GET"])
 def ok():
+    if "userid" not in session:
+        return redirect('/login')
+    uid = session['userid']
     if request.method=="POST":
         parent=request.form["parent"]if"parent"in request.form else -1
         server=request.form["server"]if"server"in request.form else -1
@@ -146,7 +149,7 @@ def ok():
         server=request.args["server"]if"server"in request.args else -1
     if(server==-1):
         return redirect("/")
-    return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
+    return render_template("create.html",parent=parent,server=server,tree=database.parents(parent)if parent!=-1 else [],is_admin=database.check_admin(uid,server),user_id=session["userid"],view_mode="create",server_list=database.user_servers_dict(uid))
 
 #ImmutableMultiDict([('title', ''), ('body', ''), ('snips', '{%{{{{py\r\n\r\n}}}}%}'), ('parent', '-1'), ('server', '-1')])
 @app.route('/make_post',methods=["POST"])
@@ -237,6 +240,19 @@ def server_leave():
     serverid = request.form['serverid'].strip()
     leave_server(session['userid'],serverid)
     return redirect("/")
+
+@app.route('/server_info', methods=['GET', 'POST'])
+def server_info():
+    formkeys = request.form.keys()
+    if not ('serverid' in formkeys):
+        flash ('Need server id')
+        return redirect("/") #OR WHEREVER
+    serverid = request.form['serverid'].strip()
+    serverName = database.get_serverName(serverid)
+
+    users = database.all_users(serverid)
+
+    return render_template('server_info.html', allUsers=users, server=severName)
 
 if __name__ == "__main__":
     #database.db_reset()

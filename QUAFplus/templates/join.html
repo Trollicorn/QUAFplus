@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>QUAF+ Server Creation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+
+  <body style="background-color:burlywood">
+
+    <div style="text-align:center;margin:auto;margin-top:100px;width:70%;background-color:beige;">
+
+      <h3><p class="text-info">Server Joining</p></h3>
+      <form method="post" action="/join_server">
+        <div class="form-group">
+          <label for="name"> Server id </label>
+          <input type="text" name="serverid" class="form-control" id="name">
+        </div>
+        <div class="form-group">
+          <label for="password"> Server Password </label>
+          <input type="password" name="password" placeholder="password" class="form-control" id="password">
+        </div>
+        <button type="submit" class="btn btn-info">Join Server</button> </form>
+
+
+    </div>
+
+  </body>
+
+
+
+</html>

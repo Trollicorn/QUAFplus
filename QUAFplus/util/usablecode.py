@@ -121,6 +121,16 @@ def user_servers_dict(uid):
     servers = c.execute("SELECT id, users, name FROM SERVERS;").fetchall()
     return[{'id': o[0], 'name':o[2]}for o in servers if uid in[int(i)for i in o[1].split(",")]]
 
+def all_users(serverid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT members FROM servers WHERE id = ?", (serverid,)).fetchone(0)
+    list = []
+    for i in b.split(","):
+        list.append({"name": i})
+    return list
+
+
 
 def check_admin(uid, serverid):
     if serverid == -1:
@@ -154,11 +164,27 @@ def join_server(uid, serverid):
         db.commit()
         db.close()
 
+
+def get_serverName(serverid):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT name FROM servers WHERE id=?;", (serverid,)).fetchone()[0]
+    return b
+
+def get_serverid(name):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT * FROM servers WHERE name=?;", (name,)).fetchone()[0]
+    return b
+
+
 def get_spass(serverid):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
-    a = c.execute("SELECT password FROM servers where id=?;",(serverid,)).fetchone()[0]
+    a = c.execute("SELECT password FROM servers where id=?;",
+                  (serverid,)).fetchone()[0]
     return a
+
 
 def leave_server(uid, serverid):
     if check_user(uid, serverid):
@@ -213,6 +239,7 @@ def user_exists(email):
                     (email,)).fetchone() != None
     db.close()
     return tmp
+
 
 def check_password(email, password):
     db = sqlite3.connect(DB_FILE)
