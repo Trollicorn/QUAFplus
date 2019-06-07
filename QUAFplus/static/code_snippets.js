@@ -60,9 +60,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 		var r2=s.indexOf("\n",r1+1);
 		var nd=s.indexOf("}}}}%}",r2);
 		if(r==-1||r1==-1||r2==-1||nd==-1)return;
-		var lang=s.substring(r+6,r1);
-		var title=s.substring(r1+1,r2);
-		var body=s.substring(r2+1,nd);
+		var lang=s.substring(r+6,r1).replace(/\r/gm,"").replace(/\n/gm,"");
+		var title=s.substring(r1+1,r2).replace(/\r/gm,"").replace(/\n/gm,"");
+		var body=s.substring(r2+1,nd).replace(/\r/gm,"").replace(/\n/gm,"");
 		if(lang=="py"){
 			let ok=document.createElement('div');
 			ok.setAttribute("class","py_snip col-lg-4 col-md-8 col-sm-12");
