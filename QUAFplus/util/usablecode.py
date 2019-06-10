@@ -4,10 +4,12 @@ import datetime
 import hashlib
 
 #if local
-DB_FILE = "quaf.db"
-
+DB_FILE = "data/quaf.db"
+try:
+    sqlite3.connect(DB_FILE)
+except sqlite3.OperationalError:
 #if on virtual machine
-#DB_FILE = '/var/www/QUAFplus/QUAFplus/quaf.db'
+    DB_FILE = '/var/www/QUAFplus/QUAFplus/data/quaf.db'
 
 def db_reset():
     db = sqlite3.connect(DB_FILE)
