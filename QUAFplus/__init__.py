@@ -230,7 +230,7 @@ def server_join():
     if password != spass:
         flash('Incorrect password')
         return render_template('join_server.html') #OR WHEREVER
-    join_server(session['userid'],serverid)
+    database.join_server(session['userid'],serverid)
     return redirect("/")
 
 @app.route('/leave_server',methods=['GET','POST'])
