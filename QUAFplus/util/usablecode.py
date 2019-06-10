@@ -25,6 +25,19 @@ def db_reset():
     db.commit()
     db.close()
 
+def class_overview(serverid):
+    '''stats for a class'''
+
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    b = c.execute("SELECT users FROM servers WHERE id = ?;", (serverid,)).fetchone(0)
+    lst = []
+    for i in b.split(","):
+        user = c.execute("SELECT firstN, numPost, numDeleted, numBest FROM users WHERE id=?;",(i,)).fetchone()
+        lst.append(({"name": user[0], "numPost": user[1], "numDeleted": user[2], "numBest": user[3]}))
+    db.close()
+    return lst
+
 
 def tree(postid):
     db = sqlite3.connect(DB_FILE)
@@ -76,6 +89,18 @@ def ans_post(postid):
     c.execute("UPDATE posts SET answered=1 WHERE id=?;", (postid,))
     db.commit()
     db.close()
+
+def edit_post(author, postid, edit):
+    '''kind of a basic edit, where only a small note can be adde to the original post'''
+    db = sqlite3.connect(DB_FILE)
+    c = db. cursor()
+    old = str(c.execute("SELECT body FROM posts WHERE id=? AND author=?;", (postid,author,)).fetchone() )
+    old += "/n" + edit
+    c.execute("UPDATE posts SET body=? WHERE id =?;", (old, postid,))
+    db.commit()
+    db.close()
+    # return old
+
 
 
 def quick_user_inf(uid):
@@ -292,7 +317,13 @@ def add_verified(email, passhash, firstN, lastN):
     db.close()
     return "added"
 
-# add_verified("blu4@stuy.edu", "123", "bo", "lu")
+
+# add_verified("blu4@stuy.edu", "123", "boho", "lu")
+# print(get_uid("blu4@stuy.edu"))
+# mk_post("testingg", "body", "bleh", 3, -1, "no tag")
+
+# print(edit_post(3, 1, "sup dude"))
+
 
 # stat = user_profile(get_uid("blu4@stuy.edu"))
 # print(stat['first'])

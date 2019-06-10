@@ -258,5 +258,5 @@ def server_info():
 
 if __name__ == "__main__":
     #database.db_reset()
-    app.debug = True
+    app.debug = False
     app.run()
