@@ -2,6 +2,8 @@
 
 PM Mohammed Uddin, Bo Lu, Theodore Peters, Simon Tsui
 
+[Watch our demo video here](https://youtu.be/tOX9dEvIgag)
+
 ## Summary
 This is a forum tailored specifically for Stuy CS classes
 
