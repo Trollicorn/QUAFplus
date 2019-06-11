@@ -162,6 +162,16 @@ def okok():
             print(request.form)
             database.mk_post(author=session["userid"],**request.form)
     return render_template("redirect_to.html",server=serverid,post=-1)
+@app.route("/edit_post",methods=["POST"])
+def okokok():
+    if"userid"in session:
+        uid=int(session["userid"])
+        postid=int(request.form["id"])
+        postinfo=database.tree(postid)
+        serverid=postinfo["server"]
+        if database.check_admin(uid,serverid)or uid==postinfo["author"]["uid"]:
+            database.edit_post(postid)
+        return render_template("redirect_to.html",server=serverid,post=-1)
 @app.route("/delete_post",methods=["POST"])
 def okokok():
     if"userid"in session:
