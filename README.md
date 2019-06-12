@@ -3,7 +3,7 @@
 #Roles
 Mohammed Uddin (Project Manager) 
 Bo Lu (Databse, Back-end)
-Theodore Peters (Javascript, Back-end)
+Theodore Peters (Javascript, Front-end, Database, Back-end)
 Simon Tsui (Front-end)
 
 [Watch our demo video here](https://youtu.be/CUgisLEqsCg)
