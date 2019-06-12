@@ -1,8 +1,12 @@
 # QUAF+ (self-titled)
 
-PM Mohammed Uddin, Bo Lu, Theodore Peters, Simon Tsui
+#Roles
+Mohammed Uddin (Project Manager) 
+Bo Lu (Databse, Back-end)
+Theodore Peters (Javascript, Back-end)
+Simon Tsui (Front-end)
 
-[Watch our demo video here](https://youtu.be/tOX9dEvIgag)
+[Watch our demo video here](https://youtu.be/CUgisLEqsCg)
 
 ## Summary
 This is a forum tailored specifically for Stuy CS classes
